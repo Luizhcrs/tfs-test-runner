@@ -1,0 +1,1252 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ page_title }}</title>
+<style>
+  :root{
+    {% if logo_url %}--logo-url:url("{{ logo_url }}");{% endif %}
+    --bg:#0b0e14; --panel:#141821; --panel2:#1c2230; --panel3:#252c3d;
+    --border:#2d3548; --border2:#3a435c;
+    --text:#e8ecf3; --muted:#8a93a6; --muted2:#5a6478;
+    --accent:#5b8cff; --accent-h:#7ba3ff;
+    --ok:#3fb950; --ok-bg:#0d2f1a;
+    --warn:#d29922; --warn-bg:#2c2308;
+    --danger:#f85149; --danger-bg:#3a1010;
+    --na:#6e7787; --na-bg:#22283a;
+    --shadow:0 8px 32px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font:14px/1.55 -apple-system,Segoe UI,Inter,Roboto,sans-serif;
+    background:var(--bg);color:var(--text);
+    min-height:100vh;
+  }
+  /* ============ HEADER ============ */
+  header{
+    position:sticky;top:0;z-index:30;background:rgba(20,24,33,.95);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);padding:10px 20px;
+  }
+  .header-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .header-row + .header-row{margin-top:8px}
+  .brand{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+  .brand h1{font-size:14px;margin:0;font-weight:600;letter-spacing:.2px}
+  .brand .sub{font-size:11px;color:var(--muted);font-weight:400}
+  .stats{display:flex;gap:8px;color:var(--muted);font-size:12px;flex-wrap:wrap;align-items:center}
+  .stats b{color:var(--text);font-variant-numeric:tabular-nums}
+  .pill{padding:3px 9px;border-radius:11px;font-size:11px;font-weight:500;display:inline-flex;align-items:center;gap:4px}
+  .pill.ok{background:var(--ok-bg);color:var(--ok)}
+  .pill.fail{background:var(--danger-bg);color:var(--danger)}
+  .pill.na{background:var(--na-bg);color:var(--muted)}
+  .pill.todo{background:var(--panel3);color:var(--muted)}
+  .progress{flex:1;min-width:140px;max-width:260px;height:6px;background:var(--panel2);border-radius:3px;overflow:hidden}
+  .progress > div{height:100%;background:linear-gradient(90deg,var(--accent),var(--ok));transition:width .3s}
+  .actions{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+  button,.btn{
+    background:var(--panel2);color:var(--text);border:1px solid var(--border);
+    padding:6px 11px;border-radius:6px;cursor:pointer;font-size:12px;
+    font-family:inherit;transition:.15s;display:inline-flex;align-items:center;gap:6px;
+  }
+  button:hover,.btn:hover{background:var(--panel3);border-color:var(--border2)}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
+  button.primary:hover{background:var(--accent-h)}
+  button.danger{color:var(--danger);border-color:var(--danger-bg)}
+  button.danger:hover{background:var(--danger-bg)}
+  button.tiny{padding:3px 8px;font-size:11px}
+  .search{
+    flex:1;min-width:200px;max-width:380px;
+    background:var(--panel2);border:1px solid var(--border);border-radius:6px;
+    padding:6px 10px;color:var(--text);font:13px inherit;
+  }
+  .search:focus{outline:none;border-color:var(--accent)}
+  .filter-chips{display:flex;gap:5px;flex-wrap:wrap}
+  .chip{
+    padding:4px 10px;border-radius:14px;font-size:11px;cursor:pointer;
+    background:var(--panel2);border:1px solid var(--border);color:var(--muted);
+    user-select:none;
+  }
+  .chip:hover{border-color:var(--border2);color:var(--text)}
+  .chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .chip .n{margin-left:4px;font-variant-numeric:tabular-nums;opacity:.85}
+
+  /* ============ MAIN ============ */
+  main{max-width:1200px;margin:0 auto;padding:20px}
+
+  /* Phase */
+  .phase{
+    background:var(--panel);border:1px solid var(--border);
+    border-radius:12px;margin-bottom:14px;overflow:hidden;
+  }
+  .phase-head{
+    padding:13px 16px;display:flex;align-items:center;gap:11px;
+    cursor:pointer;user-select:none;transition:background .15s;
+  }
+  .phase-head:hover{background:rgba(255,255,255,.02)}
+  .phase.open .phase-head{border-bottom:1px solid var(--border)}
+  .phase-head h2{font-size:14px;margin:0;flex:1;font-weight:600}
+  .phase-head .desc{font-size:11px;color:var(--muted);font-weight:400;display:block;margin-top:2px}
+  .badge{font-size:10px;padding:3px 8px;border-radius:10px;background:var(--panel2);color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+  .badge.easy{background:var(--ok-bg);color:var(--ok)}
+  .badge.med{background:var(--warn-bg);color:var(--warn)}
+  .badge.hard{background:var(--danger-bg);color:var(--danger)}
+  .counter{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .chev{transition:transform .2s;color:var(--muted);font-size:11px}
+  .phase.open > .phase-head .chev{transform:rotate(90deg)}
+  .phase-body{display:none;padding:8px 14px 12px}
+  .phase.open .phase-body{display:block}
+
+  /* Case */
+  .case{
+    background:var(--panel2);border:1px solid var(--border);
+    border-radius:9px;margin-bottom:9px;overflow:hidden;transition:.15s;
+  }
+  .case:hover{border-color:var(--border2)}
+  .case-head{
+    padding:11px 14px;display:flex;align-items:center;gap:10px;
+    cursor:pointer;user-select:none;
+  }
+  .case.open > .case-head{border-bottom:1px solid var(--border)}
+  .case-head .id{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    color:var(--muted);font-size:10px;flex:0 0 auto;
+    background:var(--panel3);padding:2px 7px;border-radius:4px;
+  }
+  .case-head .title{flex:1;font-size:13px;font-weight:500;line-height:1.4}
+  .case-head .status-bar{display:flex;gap:4px;font-size:10px;flex:0 0 auto}
+  .status-bar .dot{
+    width:7px;height:7px;border-radius:50%;background:var(--panel3);
+  }
+  .status-bar .dot.pass{background:var(--ok)}
+  .status-bar .dot.fail{background:var(--danger)}
+  .status-bar .dot.na{background:var(--na)}
+  .status-bar .dot.partial{background:var(--accent)}
+  .case.open > .case-head .chev{transform:rotate(90deg)}
+  .case-body{display:none;padding:0}
+  .case.open .case-body{display:block}
+
+  .case-toolbar{
+    display:flex;gap:6px;align-items:center;flex-wrap:wrap;
+    padding:10px 14px;background:rgba(0,0,0,.15);
+    border-bottom:1px dashed var(--border);
+  }
+  .case-toolbar .meta{font-size:11px;color:var(--muted);margin-right:auto}
+  .case-toolbar .meta b{color:var(--text);font-weight:500}
+
+  .case-summary{padding:12px 14px;border-bottom:1px dashed var(--border)}
+  .case-summary label{font-size:11px;color:var(--muted);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+  .case-summary textarea{
+    width:100%;background:var(--bg);color:var(--text);
+    border:1px solid var(--border);border-radius:6px;
+    padding:9px 10px;font:13px/1.5 inherit;min-height:60px;resize:vertical;
+  }
+  .case-summary textarea:focus{outline:none;border-color:var(--accent)}
+
+  .case-evidence{padding:12px 14px;border-bottom:1px dashed var(--border)}
+  .case-evidence h3{font-size:11px;color:var(--muted);margin:0 0 8px;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+
+  .steps-wrap{padding:0 14px 14px}
+
+  .step{
+    display:grid;grid-template-columns:24px 56px 1fr;gap:10px;
+    padding:11px 0;border-top:1px solid var(--border);align-items:start;
+  }
+  .step:first-of-type{border-top:none}
+  .step input[type=checkbox]{
+    width:17px;height:17px;cursor:pointer;accent-color:var(--accent);margin-top:2px;
+  }
+  .step .num{
+    font-family:ui-monospace,monospace;font-size:11px;color:var(--muted);
+    padding-top:2px;text-align:right;
+  }
+  .step-content{min-width:0}
+  .step-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+  .col h4{font-size:10px;color:var(--muted);margin:0 0 4px;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+  .col .text{
+    background:var(--bg);border:1px solid var(--border);border-radius:6px;
+    padding:8px 10px;font-size:12.5px;white-space:pre-wrap;word-break:break-word;
+    min-height:38px;line-height:1.5;
+  }
+  .step-tools{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;margin-top:6px}
+  .step-tools select{
+    background:var(--bg);color:var(--text);border:1px solid var(--border);
+    padding:5px 9px;border-radius:5px;font-size:12px;font-family:inherit;cursor:pointer;
+  }
+  .step-tools select.s-pass{color:var(--ok);border-color:var(--ok);background:var(--ok-bg)}
+  .step-tools select.s-fail{color:var(--danger);border-color:var(--danger);background:var(--danger-bg)}
+  .step-tools select.s-na{color:var(--muted)}
+  .step-tools .obs{
+    flex:1;min-width:200px;background:var(--bg);color:var(--text);
+    border:1px solid var(--border);border-radius:5px;padding:6px 9px;
+    font:12px inherit;resize:vertical;min-height:32px;
+  }
+  .step-tools .obs:focus{outline:none;border-color:var(--accent)}
+  .paste-zone{
+    margin-top:8px;border:1.5px dashed var(--border);border-radius:6px;
+    padding:11px;font-size:11px;color:var(--muted);text-align:center;
+    cursor:pointer;transition:.15s;user-select:none;
+  }
+  .paste-zone:hover,.paste-zone.over{border-color:var(--accent);color:var(--accent);background:rgba(91,140,255,.05)}
+  .paste-zone:focus{outline:none;border-color:var(--accent);background:rgba(91,140,255,.08);color:var(--accent)}
+  .paste-zone:focus .pz-text::after{content:" — pronto pra colar";color:var(--ok);font-weight:600}
+  .pz-text{display:inline-block;margin-right:10px}
+  .pz-pick{
+    background:var(--panel3);color:var(--text);border:1px solid var(--border2);
+    padding:4px 10px;border-radius:5px;font-size:11px;cursor:pointer;
+  }
+  .pz-pick:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+  .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .thumb{
+    position:relative;width:120px;border:1px solid var(--border);
+    border-radius:6px;overflow:hidden;background:#000;
+    transition:.15s;
+  }
+  .thumb:hover{border-color:var(--accent-h);transform:translateY(-1px)}
+  .thumb img{width:100%;height:80px;object-fit:cover;cursor:zoom-in;display:block}
+  .thumb .cap{
+    padding:4px 6px;font-size:10px;color:var(--muted);
+    background:var(--panel3);border-top:1px solid var(--border);
+    line-height:1.3;min-height:18px;
+  }
+  .thumb .cap[contenteditable]:focus{outline:1px solid var(--accent);color:var(--text)}
+  .thumb .cap:empty::before{content:"+ legenda";color:var(--muted2);font-style:italic}
+  @media print { .thumb .cap:empty::before{content:"" !important} }
+  .thumb .toolbar{
+    position:absolute;top:3px;right:3px;display:flex;gap:3px;
+    opacity:0;transition:opacity .15s;
+  }
+  .thumb:hover .toolbar{opacity:1}
+  .thumb .toolbar button{
+    background:rgba(0,0,0,.78);color:#fff;border:none;
+    width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:11px;
+    line-height:1;padding:0;
+  }
+  .thumb .toolbar button:hover{background:var(--danger)}
+  .thumb .num-tag{
+    position:absolute;top:4px;left:4px;
+    background:rgba(0,0,0,.7);color:#fff;font-size:10px;
+    padding:1px 6px;border-radius:8px;font-family:ui-monospace,monospace;
+  }
+  .step.done{opacity:.65}
+  .step.done .col .text{opacity:.85}
+  .step.s-pass{border-left:3px solid var(--ok);padding-left:6px}
+  .step.s-fail{border-left:3px solid var(--danger);padding-left:6px}
+  .step.s-na{border-left:3px solid var(--na);padding-left:6px}
+
+  /* Filtering */
+  .case.hidden,.phase.hidden{display:none}
+  .step.hidden{display:none}
+  .case mark{background:#5b8cff44;color:inherit;border-radius:2px}
+
+  /* Lightbox */
+  .lightbox{
+    position:fixed;inset:0;background:rgba(0,0,0,.94);display:none;
+    align-items:center;justify-content:center;z-index:100;flex-direction:column;gap:14px;
+  }
+  .lightbox.show{display:flex}
+  .lightbox img{max-width:92vw;max-height:80vh;cursor:zoom-out}
+  .lightbox .lb-cap{
+    background:var(--panel);border:1px solid var(--border);
+    color:var(--text);padding:8px 14px;border-radius:6px;
+    font-size:13px;max-width:80vw;text-align:center;
+  }
+  .lightbox .lb-cap[contenteditable]:focus{outline:1px solid var(--accent)}
+  .lightbox .lb-close{
+    position:absolute;top:14px;right:14px;
+    background:rgba(255,255,255,.1);color:#fff;border:none;
+    width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;
+  }
+
+  /* Toast */
+  .toasts{position:fixed;bottom:18px;right:18px;display:flex;flex-direction:column;gap:8px;z-index:200}
+  .toast{
+    background:var(--panel);border:1px solid var(--border);
+    padding:10px 14px;border-radius:8px;font-size:13px;
+    box-shadow:var(--shadow);min-width:200px;
+    animation:slideIn .25s ease-out;
+  }
+  .toast.ok{border-left:3px solid var(--ok)}
+  .toast.warn{border-left:3px solid var(--warn)}
+  .toast.err{border-left:3px solid var(--danger)}
+  @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+  /* FAB back-to-top */
+  .fab{
+    position:fixed;bottom:18px;left:18px;z-index:50;
+    background:var(--panel);border:1px solid var(--border);
+    width:38px;height:38px;border-radius:50%;cursor:pointer;
+    display:none;align-items:center;justify-content:center;font-size:16px;
+    color:var(--muted);box-shadow:var(--shadow);
+  }
+  .fab:hover{color:var(--text);border-color:var(--border2)}
+  .fab.show{display:flex}
+
+  footer{padding:18px;color:var(--muted);font-size:11px;text-align:center}
+  footer kbd{background:var(--panel2);border:1px solid var(--border);padding:1px 5px;border-radius:3px;font-size:10px}
+
+  /* ============ PRINT ============ */
+  @page { size: A4; margin: 12mm 14mm }
+  @media print {
+    html,body{background:#fff !important;color:#000;margin:0;padding:0}
+    .no-print, header, footer, .toasts, .fab,
+    .actions, .paste-zone, .chev, .step-tools select, .thumb .toolbar,
+    .case-toolbar, .filter-chips, .search { display:none !important }
+    main{max-width:none;padding:0;margin:0}
+
+    .phase, .case { background:#fff !important; border:none !important }
+    .phase-body, .case-body { display:block !important }
+    .phase{margin-bottom:0;border:none !important}
+    .phase + .phase{border-top:none}
+    .case{
+      break-inside:avoid;page-break-inside:avoid;
+      margin:0 0 10px 0;border:1px solid #bbb !important;
+      border-radius:6px;overflow:visible;
+    }
+
+    .phase-head{padding:6px 8px;background:#fff !important;color:#000;border-bottom:1px solid #ddd !important}
+    .phase-head .desc, .phase-head .counter, .badge{display:none !important}
+    .phase-head h2{font-size:14px;color:#000;margin:0}
+    .phase-head .chev{display:none !important}
+
+    .case-head{background:#eef1f6 !important;color:#000;padding:6px 10px;cursor:default;gap:8px}
+    .case-head .title{color:#000;font-size:12px;font-weight:600}
+    .case-head .id{background:#fff !important;color:#333 !important;border:1px solid #aaa;font-size:10px}
+    .case-head .status-bar{display:none !important}
+
+    .col .text{background:#fff !important;color:#000 !important;border:1px solid #ccc !important;font-size:11.5px}
+    .step-tools .obs{
+      background:#fff !important;color:#000 !important;border:none !important;
+      padding:2px 0;min-height:auto;height:auto;font-size:11.5px;
+    }
+
+    .thumb{
+      width:auto !important;max-width:100%;height:auto !important;
+      border:1px solid #999 !important;break-inside:avoid;
+      page-break-inside:avoid;background:#fff !important;margin:0;
+    }
+    .thumb img{
+      width:100% !important;max-width:100%;height:auto !important;
+      max-height:none;object-fit:contain !important;cursor:default;display:block;
+    }
+    .thumb .cap{background:#f3f4f7 !important;color:#000 !important;border-top:1px solid #ddd;font-size:10px;padding:3px 6px}
+    .thumb .num-tag{display:none !important}
+    .thumbs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+
+    .step input[type=checkbox]{display:none !important}
+    .step.s-pass, .step.s-fail, .step.s-na{border-left:none !important;padding-left:0 !important}
+  }
+
+  /* PRINT MODE: evidence-only — docx-like layout (caption + image flow) */
+  .step-en-label{display:none}
+  @media print {
+    /* hide everything else */
+    body.print-evidence .step-row,
+    body.print-evidence .step-tools,
+    body.print-evidence .step input[type=checkbox],
+    body.print-evidence .step .num,
+    body.print-evidence .case-summary,
+    body.print-evidence .case-evidence h3,
+    body.print-evidence .phase-head,
+    body.print-evidence .case-head .id,
+    body.print-evidence .case-head .status-bar,
+    body.print-evidence .case-head .chev,
+    body.print-evidence .step.s-pass::after,
+    body.print-evidence .step.s-fail::after,
+    body.print-evidence .step.s-na::after { display:none !important; content:"" !important }
+
+    /* flat structure */
+    body.print-evidence .phase{
+      border:none !important;background:transparent !important;
+      page-break-after:auto !important;break-after:auto !important;
+      margin:0;padding:0;
+    }
+    body.print-evidence .case{
+      border:none !important;background:transparent !important;
+      margin:0 0 14px 0;padding:0;page-break-inside:auto;break-inside:auto;
+    }
+    body.print-evidence .case + .case{
+      page-break-before:always;break-before:page;
+    }
+    body.print-evidence .case-head{
+      background:transparent !important;border:none !important;
+      padding:0;display:block !important;
+    }
+    body.print-evidence .case-head .title{display:none !important}
+    {% if logo_url %}
+    body.print-evidence .case-head::before{
+      content:"";display:block;width:100%;height:42px;
+      background-image:var(--logo-url);
+      background-repeat:no-repeat;background-position:left center;
+      background-size:contain;margin:0 0 6px 0;
+    }
+    {% endif %}
+    body.print-evidence .print-title{
+      display:block !important;color:#000;
+      font-size:15px;font-weight:700;line-height:1.35;
+      margin:0 0 12px 0;padding:0 0 8px 0;
+      border-bottom:2px solid #6cba2a;
+    }
+
+    body.print-evidence .case-evidence,
+    body.print-evidence .steps-wrap{padding:0;border:none !important}
+
+    body.print-evidence .step{
+      display:block !important;padding:0;margin:0 0 10px 0;
+      border:none !important;
+      page-break-inside:avoid;break-inside:avoid;
+    }
+    body.print-evidence .step.no-images{display:none !important}
+
+    body.print-evidence .step-en-label{
+      display:block !important;font-size:11px;font-weight:500;
+      color:#000;margin:0 0 4px;line-height:1.3;
+    }
+    body.print-evidence .step-en-label .lab{display:none}
+
+    /* image flow: one image per row, full width, captioned above */
+    body.print-evidence .thumbs{
+      display:block !important;margin:0;padding:0;
+    }
+    body.print-evidence .thumb{
+      display:block !important;width:100% !important;max-width:100% !important;
+      border:1px solid #999 !important;background:#fff !important;
+      margin:0 0 8px 0;page-break-inside:avoid;break-inside:avoid;
+    }
+    body.print-evidence .thumb img{
+      width:100% !important;height:auto !important;max-height:none !important;
+      object-fit:contain !important;display:block;
+    }
+    body.print-evidence .thumb .cap{
+      background:#f5f6f9 !important;color:#333 !important;
+      border-top:1px solid #ddd;padding:3px 8px;font-size:10px;
+      font-style:italic;text-align:center;
+    }
+    body.print-evidence .thumb .cap:empty,
+    body.print-evidence .thumb .cap[data-empty]{display:none}
+    body.print-evidence .thumb .num-tag,
+    body.print-evidence .thumb .toolbar{display:none !important}
+
+    /* PRINT MODE: single case only */
+    body[data-print-case] .phase{
+      break-after:auto !important;page-break-after:auto !important;
+      border:none !important;
+    }
+    body[data-print-case] .phase:not(.print-target){display:none !important}
+    body[data-print-case] .case:not(.print-target){display:none !important}
+    body[data-print-case] .phase.print-target .phase-head{display:none !important}
+    body[data-print-case] .case.print-target{page-break-before:auto !important;break-before:auto !important}
+    body[data-print-case] #print-cover{display:none !important}
+  }
+
+  #print-cover{display:none;page-break-after:always}
+  @media print {
+    #print-cover.show{display:block !important}
+    #print-cover h1{font-size:24px;margin:0 0 8px;color:#000}
+    #print-cover .meta{color:#444;margin-bottom:24px;font-size:13px}
+    #print-cover table{width:100%;border-collapse:collapse;margin-top:14px}
+    #print-cover th,#print-cover td{
+      border:1px solid #999;padding:6px 9px;text-align:left;font-size:12px;
+    }
+    #print-cover th{background:#f0f2f5}
+  }
+</style>
+</head>
+<body>
+
+<header class="no-print">
+  <div class="header-row">
+    <div class="brand">
+      <div>
+        <h1>{{ page_title }}</h1>
+        <span class="sub">{{ subtitle }}</span>
+      </div>
+    </div>
+    <input class="search" id="search" placeholder="Buscar por ID, título, palavra-chave… ( / )">
+    <div class="actions">
+      <button id="expand">Expandir</button>
+      <button id="collapse">Recolher</button>
+      <button id="export-data">Exportar backup</button>
+      <button id="import-data">Importar backup</button>
+      <button class="primary" id="print-general" title="Imprimir / salvar PDF de evidência geral (Ctrl+P)">PDF Geral (evidências)</button>
+    </div>
+  </div>
+  <div class="header-row">
+    <div class="stats">
+      <span>Steps <b id="done-n">0</b>/<b id="total-n">0</b></span>
+      <span class="pill ok">OK <b id="pass-n">0</b></span>
+      <span class="pill fail">FALHA <b id="fail-n">0</b></span>
+      <span class="pill na">N/A <b id="na-n">0</b></span>
+      <span class="pill todo">Pendente <b id="todo-n">0</b></span>
+    </div>
+    <div class="progress"><div id="bar" style="width:0%"></div></div>
+    <div class="filter-chips" id="filters">
+      <span class="chip active" data-f="all">Todos<span class="n" id="cn-all">0</span></span>
+      <span class="chip" data-f="todo">Pendentes<span class="n" id="cn-todo">0</span></span>
+      <span class="chip" data-f="progress">Em andamento<span class="n" id="cn-progress">0</span></span>
+      <span class="chip" data-f="ok">Concluídos OK<span class="n" id="cn-ok">0</span></span>
+      <span class="chip" data-f="fail">Com falha<span class="n" id="cn-fail">0</span></span>
+    </div>
+  </div>
+</header>
+
+<main id="root"></main>
+
+<div id="print-cover">
+  <h1>{{ page_title }}</h1>
+  <div class="meta" id="cover-meta"></div>
+  <table>
+    <thead><tr><th>Fase</th><th>Casos</th><th>Steps</th><th>OK</th><th>Falha</th><th>Pendente</th></tr></thead>
+    <tbody id="cover-table"></tbody>
+  </table>
+</div>
+
+<footer class="no-print">
+  Estado salvo no navegador. Imagens em IndexedDB.
+  <kbd>/</kbd> busca · <kbd>Ctrl</kbd>+<kbd>P</kbd> PDF geral · <kbd>Esc</kbd> fecha lightbox
+</footer>
+
+<div class="lightbox" id="lb">
+  <button class="lb-close" id="lb-close">×</button>
+  <img id="lb-img">
+  <div class="lb-cap" id="lb-cap" contenteditable="true" spellcheck="false">Clique para editar legenda…</div>
+</div>
+
+<button class="fab no-print" id="fab" title="Voltar ao topo">↑</button>
+<div class="toasts no-print" id="toasts"></div>
+<input type="file" id="imp-file" accept=".json" style="display:none">
+
+<script>
+const PHASES = {{ data_json | safe }};
+const KEY = "e350-tests-v3";
+const state = JSON.parse(localStorage.getItem(KEY) || "{}");
+const openState = JSON.parse(localStorage.getItem(KEY+"-open") || "{}");
+const captions = JSON.parse(localStorage.getItem(KEY+"-cap") || "{}");
+let currentFilter = "all";
+let currentSearch = "";
+
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)) }
+function saveOpen(){ localStorage.setItem(KEY+"-open", JSON.stringify(openState)) }
+function saveCaps(){ localStorage.setItem(KEY+"-cap", JSON.stringify(captions)) }
+function getS(k){ return state[k] || {} }
+function setS(k,v){ state[k] = {...getS(k), ...v}; save() }
+
+/* ============ Toasts ============ */
+function toast(msg, type="ok", ms=2200){
+  const el = document.createElement("div");
+  el.className = "toast " + type;
+  el.textContent = msg;
+  document.getElementById("toasts").appendChild(el);
+  setTimeout(()=>{ el.style.opacity = "0"; el.style.transform = "translateX(20px)"; }, ms);
+  setTimeout(()=> el.remove(), ms+300);
+}
+
+/* ============ IndexedDB ============ */
+let db;
+const dbReq = indexedDB.open("e350-imgs", 1);
+dbReq.onupgradeneeded = e => {
+  e.target.result.createObjectStore("imgs", {keyPath:"id"});
+};
+dbReq.onsuccess = e => { db = e.target.result; loadAllImages(); };
+
+function imgPut(id, dataUrl){
+  return new Promise(res=>{
+    const tx = db.transaction("imgs","readwrite");
+    tx.objectStore("imgs").put({id, dataUrl, ts:Date.now()});
+    tx.oncomplete = res;
+  });
+}
+function imgDel(id){
+  return new Promise(res=>{
+    const tx = db.transaction("imgs","readwrite");
+    tx.objectStore("imgs").delete(id);
+    tx.oncomplete = res;
+  });
+}
+function imgListByPrefix(prefix){
+  return new Promise(res=>{
+    const out = [];
+    const tx = db.transaction("imgs","readonly");
+    tx.objectStore("imgs").openCursor().onsuccess = e=>{
+      const c = e.target.result;
+      if(!c) return res(out.sort((a,b)=>a.id.localeCompare(b.id)));
+      if(c.key.startsWith(prefix)) out.push({id:c.key, dataUrl:c.value.dataUrl});
+      c.continue();
+    };
+  });
+}
+
+async function loadAllImages(){
+  const zones = document.querySelectorAll(".paste-zone");
+  for(const z of zones) await refreshThumbs(z.dataset.prefix);
+}
+
+async function refreshThumbs(prefix){
+  const cont = document.querySelector(`.thumbs[data-prefix="${prefix}"]`);
+  if(!cont) return;
+  const list = await imgListByPrefix(prefix);
+  cont.innerHTML = list.map((it,i)=>{
+    const cap = captions[it.id] || "";
+    return `
+    <div class="thumb">
+      <span class="num-tag">#${i+1}</span>
+      <img src="${esc(it.dataUrl)}" data-zoom data-id="${esc(it.id)}">
+      <div class="cap" contenteditable="true" spellcheck="false" data-cap-id="${esc(it.id)}">${esc(cap)}</div>
+      <div class="toolbar"><button class="rm" data-id="${esc(it.id)}" title="Remover">×</button></div>
+    </div>`;
+  }).join("");
+}
+
+/* ============ Stats ============ */
+function totals(){
+  let total=0, pass=0, fail=0, na=0;
+  for(const p of PHASES) for(const c of p.cases) for(let i=0;i<c.steps.length;i++){
+    total++;
+    const st = getS(`${c.id}:${i}`);
+    if(st.status==="pass") pass++;
+    else if(st.status==="fail") fail++;
+    else if(st.status==="na") na++;
+  }
+  return {total, pass, fail, na, todo:total-pass-fail-na, done:pass+fail+na};
+}
+
+function caseStatus(c){
+  let pass=0,fail=0,na=0,total=c.steps.length;
+  for(let i=0;i<total;i++){
+    const st = getS(`${c.id}:${i}`);
+    if(st.status==="pass") pass++;
+    else if(st.status==="fail") fail++;
+    else if(st.status==="na") na++;
+  }
+  const done = pass+fail+na;
+  let cls = "todo";
+  if(fail>0) cls = "fail";
+  else if(done===total && total>0) cls = "ok";
+  else if(done>0) cls = "progress";
+  return {pass,fail,na,done,total,cls};
+}
+
+function updateStats(){
+  const t = totals();
+  document.getElementById("done-n").textContent = t.done;
+  document.getElementById("total-n").textContent = t.total;
+  document.getElementById("pass-n").textContent = t.pass;
+  document.getElementById("fail-n").textContent = t.fail;
+  document.getElementById("na-n").textContent = t.na;
+  document.getElementById("todo-n").textContent = t.todo;
+  const pct = t.total ? Math.round(t.done/t.total*100) : 0;
+  document.getElementById("bar").style.width = pct + "%";
+
+  // case counts per filter
+  const counts = {all:0,todo:0,progress:0,ok:0,fail:0};
+  for(const p of PHASES) for(const c of p.cases){
+    counts.all++;
+    counts[caseStatus(c).cls]++;
+  }
+  for(const f of Object.keys(counts)){
+    const el = document.getElementById("cn-"+f);
+    if(el) el.textContent = counts[f];
+  }
+}
+
+/* ============ Render ============ */
+function esc(s){ return (s==null?"":String(s)).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])) }
+function levelLabel(l){ return l==="easy"?"fácil":l==="med"?"médio":"difícil" }
+
+function render(){
+  const root = document.getElementById("root");
+  const parts = [];
+  for(const p of PHASES){
+    let phaseDone=0, phaseTotal=0;
+    for(const c of p.cases){
+      phaseTotal += c.steps.length;
+      const cs = caseStatus(c);
+      phaseDone += cs.done;
+    }
+    const open = openState["p_"+p.id] !== false;
+    parts.push(`
+      <section class="phase ${open?"open":""}" data-pid="${p.id}">
+        <div class="phase-head">
+          <span class="chev">▶</span>
+          <div style="flex:1;min-width:0">
+            <h2>${esc(p.title)}</h2>
+            <span class="desc">${esc(p.desc)}</span>
+          </div>
+          <span class="badge ${p.level}">${levelLabel(p.level)}</span>
+          <span class="counter">${phaseDone}/${phaseTotal} steps · ${p.cases.length} casos</span>
+        </div>
+        <div class="phase-body">
+          ${p.cases.map(c=>renderCase(c)).join("")}
+        </div>
+      </section>
+    `);
+  }
+  root.innerHTML = parts.join("");
+  if(db) loadAllImages();
+  applyFilters();
+  updateStats();
+}
+
+function renderCase(c){
+  const open = openState["c_"+c.id] === true;
+  const cs = caseStatus(c);
+  const summary = getS(`sum:${c.id}`).text || "";
+  const dots = c.steps.map((_,i)=>{
+    const st = getS(`${c.id}:${i}`);
+    if(st.status==="pass") return '<span class="dot pass" title="OK"></span>';
+    if(st.status==="fail") return '<span class="dot fail" title="Falha"></span>';
+    if(st.status==="na") return '<span class="dot na" title="N/A"></span>';
+    if(st.checked) return '<span class="dot partial" title="Em andamento"></span>';
+    return '<span class="dot" title="Pendente"></span>';
+  }).join("");
+
+  return `
+    <article class="case ${open?"open":""}" data-cid="${c.id}" data-status="${cs.cls}">
+      <header class="case-head">
+        <span class="chev">▶</span>
+        <span class="id">${esc(c.id)}</span>
+        <span class="title" data-cid="${esc(c.id)}">${esc(c.title)}</span>
+        <span class="status-bar" title="${cs.done}/${cs.total} concluídos">${dots}</span>
+      </header>
+      <div class="case-body">
+        <div class="print-title" style="display:none">${esc(c.id)} - ${esc(c.title_en || c.title)}</div>
+        <div class="case-toolbar no-print">
+          <span class="meta"><b>${esc(c.assigned)}</b> · ${esc(c.area)}</span>
+          <button class="tiny" data-act="mark-pass" data-cid="${c.id}" title="Marcar todos os steps como OK">Marcar todos OK</button>
+          <button class="tiny" data-act="clear" data-cid="${c.id}" title="Limpar progresso deste caso">Limpar caso</button>
+          <button class="tiny primary" data-act="print-case" data-cid="${c.id}" title="Exportar PDF apenas das evidências deste caso">PDF deste caso</button>
+        </div>
+        <div class="case-summary">
+          <label>Resumo / Observações gerais do test case</label>
+          <textarea data-sumkey="sum:${c.id}" placeholder="Setup usado, ambiente, decisões, observações gerais…">${esc(summary)}</textarea>
+        </div>
+        <div class="case-evidence">
+          <h3>Evidências gerais do caso</h3>
+          <div class="paste-zone" data-prefix="case:${c.id}:" tabindex="0">
+            <span class="pz-text">Cole imagem (Ctrl+V) — clique para focar</span>
+            <button type="button" class="pz-pick" data-prefix="case:${c.id}:">Anexar arquivo</button>
+          </div>
+          <div class="thumbs" data-prefix="case:${c.id}:"></div>
+        </div>
+        <div class="steps-wrap">
+          ${c.steps.map((s,i)=>renderStep(c.id,i,s)).join("")}
+        </div>
+      </div>
+    </article>`;
+}
+
+function renderStep(cid, i, s){
+  const k = `${cid}:${i}`;
+  const st = getS(k);
+  const status = st.status || "";
+  const obs = st.obs || "";
+  const checked = st.status || st.checked ? "checked" : "";
+  const cls = ["step"];
+  if(checked) cls.push("done");
+  if(status) cls.push("s-"+status);
+  const enLabel = s.action_en ? s.action_en.split("\n")[0].slice(0,200) : "(no action text)";
+  return `
+    <div class="${cls.join(" ")}" data-key="${k}">
+      <input type="checkbox" data-k="${k}" ${checked}>
+      <span class="num">${esc(s.step || "-")}</span>
+      <div class="step-content">
+        <div class="step-en-label"><span class="lab">Step ${esc(s.step || "-")}</span>${esc(enLabel)}</div>
+        <div class="step-row">
+          <div class="col"><h4>Ação</h4><div class="text">${esc(s.action)}</div></div>
+          <div class="col"><h4>Resultado esperado</h4><div class="text">${esc(s.expected)}</div></div>
+        </div>
+        <div class="step-tools">
+          <select data-k="${k}" data-field="status" class="s-${status||"none"}">
+            <option value="">— status —</option>
+            <option value="pass" ${status==="pass"?"selected":""}>OK</option>
+            <option value="fail" ${status==="fail"?"selected":""}>FALHA</option>
+            <option value="na" ${status==="na"?"selected":""}>N/A</option>
+          </select>
+          <textarea class="obs" data-k="${k}" data-field="obs" placeholder="Observação / evidência textual…">${esc(obs)}</textarea>
+        </div>
+        <div class="paste-zone" data-prefix="step:${k}:" tabindex="0">
+          <span class="pz-text">Cole imagem do step (Ctrl+V) — clique para focar</span>
+          <button type="button" class="pz-pick" data-prefix="step:${k}:">Anexar arquivo</button>
+        </div>
+        <div class="thumbs" data-prefix="step:${k}:"></div>
+      </div>
+    </div>`;
+}
+
+/* ============ Update node helpers (avoid full re-render) ============ */
+function updateCaseHeader(cid){
+  const caseEl = document.querySelector(`.case[data-cid="${cid}"]`);
+  if(!caseEl) return;
+  const phase = PHASES.find(p=>p.cases.some(c=>c.id===cid));
+  const c = phase.cases.find(c=>c.id===cid);
+  const cs = caseStatus(c);
+  caseEl.dataset.status = cs.cls;
+  const dots = c.steps.map((_,i)=>{
+    const st = getS(`${cid}:${i}`);
+    if(st.status==="pass") return '<span class="dot pass"></span>';
+    if(st.status==="fail") return '<span class="dot fail"></span>';
+    if(st.status==="na") return '<span class="dot na"></span>';
+    if(st.checked) return '<span class="dot partial"></span>';
+    return '<span class="dot"></span>';
+  }).join("");
+  caseEl.querySelector(".case-head .status-bar").innerHTML = dots;
+}
+function updatePhaseHeader(pid){
+  const p = PHASES.find(x=>x.id===pid);
+  if(!p) return;
+  let done=0, total=0;
+  for(const c of p.cases) for(let i=0;i<c.steps.length;i++){
+    total++;
+    const st = getS(`${c.id}:${i}`);
+    if(st.status) done++;
+  }
+  const el = document.querySelector(`.phase[data-pid="${pid}"] .counter`);
+  if(el) el.textContent = `${done}/${total} steps · ${p.cases.length} casos`;
+}
+
+/* ============ Event delegation ============ */
+document.addEventListener("change", e=>{
+  const t = e.target;
+  if(t.matches("input[type=checkbox][data-k]")){
+    const k = t.dataset.k;
+    setS(k, {checked: t.checked});
+    t.closest(".step").classList.toggle("done", t.checked);
+    const [cid] = k.split(":");
+    updateCaseHeader(cid);
+    updatePhaseHeader(PHASES.find(p=>p.cases.some(c=>c.id===cid)).id);
+    updateStats();
+  } else if(t.matches("select[data-field=status]")){
+    const k = t.dataset.k;
+    const v = t.value;
+    setS(k, {status: v});
+    t.className = "s-"+(v||"none");
+    const stepEl = t.closest(".step");
+    stepEl.classList.remove("s-pass","s-fail","s-na");
+    if(v) stepEl.classList.add("s-"+v);
+    stepEl.classList.toggle("done", !!(v || getS(k).checked));
+    const cb = stepEl.querySelector("input[type=checkbox]");
+    if(v && !cb.checked){ cb.checked = true; setS(k,{checked:true}) }
+    const [cid] = k.split(":");
+    updateCaseHeader(cid);
+    updatePhaseHeader(PHASES.find(p=>p.cases.some(c=>c.id===cid)).id);
+    updateStats();
+  }
+});
+
+document.addEventListener("input", e=>{
+  const t = e.target;
+  if(t.matches("textarea[data-field=obs]")){
+    setS(t.dataset.k, {obs: t.value});
+  } else if(t.matches("textarea[data-sumkey]")){
+    setS(t.dataset.sumkey, {text: t.value});
+  } else if(t.matches("[data-cap-id]")){
+    const id = t.dataset.capId;
+    const text = t.textContent.replace(/^\+ legenda$/,"").trim();
+    if(text) captions[id] = text; else delete captions[id];
+    saveCaps();
+  } else if(t.id === "search"){
+    currentSearch = t.value.toLowerCase().trim();
+    applyFilters();
+  }
+});
+
+document.addEventListener("click", e=>{
+  // Lightbox
+  if(e.target.matches("[data-zoom]")){
+    const id = e.target.dataset.id;
+    document.getElementById("lb-img").src = e.target.src;
+    const cap = captions[id] || "";
+    const capEl = document.getElementById("lb-cap");
+    capEl.textContent = cap || "Clique para editar legenda…";
+    capEl.dataset.imgId = id;
+    document.getElementById("lb").classList.add("show");
+    return;
+  }
+  if(e.target.matches(".rm")){
+    e.stopPropagation();
+    const id = e.target.dataset.id;
+    if(!confirm("Remover esta imagem?")) return;
+    imgDel(id).then(()=>{
+      delete captions[id]; saveCaps();
+      const prefix = id.split(":").slice(0,-1).join(":")+":";
+      refreshThumbs(prefix);
+      toast("Imagem removida","warn");
+    });
+    return;
+  }
+  // Per-case toolbar buttons
+  if(e.target.matches("[data-act]")){
+    e.stopPropagation();
+    const act = e.target.dataset.act;
+    const cid = e.target.dataset.cid;
+    if(act==="mark-pass") markAllCase(cid, "pass");
+    else if(act==="clear") clearCase(cid);
+    else if(act==="print-case") printCase(cid);
+    return;
+  }
+  // Filter chips
+  if(e.target.closest(".chip")){
+    const c = e.target.closest(".chip");
+    document.querySelectorAll(".chip").forEach(x=>x.classList.remove("active"));
+    c.classList.add("active");
+    currentFilter = c.dataset.f;
+    applyFilters();
+    return;
+  }
+  // Toggle case/phase headers
+  const head = e.target.closest(".phase-head, .case-head");
+  if(head){
+    if(e.target.closest(".case-summary, textarea, select, input, button, .paste-zone, .thumb, .case-toolbar")) return;
+    const parent = head.parentElement;
+    if(parent.classList.contains("phase")){
+      parent.classList.toggle("open");
+      openState["p_"+parent.dataset.pid] = parent.classList.contains("open");
+    } else if(parent.classList.contains("case")){
+      parent.classList.toggle("open");
+      openState["c_"+parent.dataset.cid] = parent.classList.contains("open");
+    }
+    saveOpen();
+  }
+});
+
+/* lightbox close */
+document.getElementById("lb-close").onclick = ()=> document.getElementById("lb").classList.remove("show");
+document.getElementById("lb").addEventListener("click", e=>{
+  if(e.target.id==="lb" || e.target.id==="lb-img") document.getElementById("lb").classList.remove("show");
+});
+document.getElementById("lb-cap").addEventListener("blur", e=>{
+  const id = e.target.dataset.imgId;
+  if(!id) return;
+  const text = e.target.textContent.replace(/^Clique para editar legenda…$/,"").trim();
+  if(text) captions[id] = text; else delete captions[id];
+  saveCaps();
+  // refresh underlying thumb caption
+  const prefix = id.split(":").slice(0,-1).join(":")+":";
+  refreshThumbs(prefix);
+});
+
+/* ============ Image paste/drop/click upload ============ */
+async function handleFiles(prefix, files){
+  let n = 0;
+  for(const f of files){
+    if(!f.type.startsWith("image/")) continue;
+    const dataUrl = await new Promise(r=>{
+      const fr = new FileReader();
+      fr.onload = ()=> r(fr.result);
+      fr.readAsDataURL(f);
+    });
+    const id = prefix + Date.now() + "_" + Math.random().toString(36).slice(2,7);
+    await imgPut(id, dataUrl);
+    n++;
+  }
+  refreshThumbs(prefix);
+  if(n) toast(`${n} imagem${n>1?"s":""} anexada${n>1?"s":""}`);
+}
+
+document.addEventListener("paste", e=>{
+  const z = e.target.closest(".paste-zone") || document.activeElement?.closest(".paste-zone");
+  if(!z) return;
+  const items = e.clipboardData.items;
+  const files = [];
+  for(const it of items) if(it.kind==="file"){ const f=it.getAsFile(); if(f) files.push(f); }
+  if(files.length){
+    e.preventDefault();
+    handleFiles(z.dataset.prefix, files);
+  }
+});
+document.addEventListener("dragover", e=>{
+  const z = e.target.closest(".paste-zone");
+  if(z){ e.preventDefault(); z.classList.add("over"); }
+});
+document.addEventListener("dragleave", e=>{
+  const z = e.target.closest(".paste-zone");
+  if(z) z.classList.remove("over");
+});
+document.addEventListener("drop", e=>{
+  const z = e.target.closest(".paste-zone");
+  if(!z) return;
+  e.preventDefault(); z.classList.remove("over");
+  handleFiles(z.dataset.prefix, e.dataTransfer.files);
+});
+/* file picker only via .pz-pick button */
+document.addEventListener("click", e=>{
+  if(e.target.matches(".pz-pick")){
+    e.stopPropagation();
+    const prefix = e.target.dataset.prefix;
+    const inp = document.createElement("input");
+    inp.type = "file"; inp.accept = "image/*"; inp.multiple = true;
+    inp.onchange = ()=> handleFiles(prefix, inp.files);
+    inp.click();
+    return;
+  }
+  /* click on paste-zone (não no botão) → foca pra Ctrl+V */
+  const z = e.target.closest(".paste-zone");
+  if(z && !e.target.matches(".pz-pick")) z.focus();
+});
+
+/* ============ Per-case actions ============ */
+function markAllCase(cid, status){
+  const phase = PHASES.find(p=>p.cases.some(c=>c.id===cid));
+  const c = phase.cases.find(c=>c.id===cid);
+  if(!confirm(`Marcar todos os ${c.steps.length} steps como ${status==="pass"?"OK":status.toUpperCase()}?`)) return;
+  for(let i=0;i<c.steps.length;i++){
+    setS(`${cid}:${i}`, {status, checked:true});
+  }
+  render();
+  toast(`Caso ${cid}: todos marcados como ${status==="pass"?"OK":status.toUpperCase()}`);
+}
+async function clearCase(cid){
+  const phase = PHASES.find(p=>p.cases.some(c=>c.id===cid));
+  const c = phase.cases.find(c=>c.id===cid);
+  if(!confirm(`Limpar TODO o progresso do caso ${cid}?\n(status, observações E imagens)`)) return;
+  for(let i=0;i<c.steps.length;i++){
+    delete state[`${cid}:${i}`];
+  }
+  delete state[`sum:${cid}`];
+  save();
+  // delete all images: case:CID:* and step:CID:*:*
+  const keys = await listAllImageKeys();
+  let n = 0;
+  for(const k of keys){
+    if(k.startsWith(`case:${cid}:`) || k.startsWith(`step:${cid}:`)){
+      await imgDel(k);
+      delete captions[k];
+      n++;
+    }
+  }
+  if(n) saveCaps();
+  render();
+  toast(`Caso ${cid} limpo (${n} imagens removidas)`,"warn");
+}
+
+/* ============ PDF export ============ */
+function cleanupPrint(){
+  document.body.classList.remove("print-evidence");
+  delete document.body.dataset.printCase;
+  document.querySelectorAll(".print-target").forEach(el=>el.classList.remove("print-target"));
+  document.querySelectorAll(".step.no-images").forEach(el=>el.classList.remove("no-images"));
+  document.getElementById("print-cover").classList.remove("show");
+}
+window.addEventListener("afterprint", cleanupPrint);
+
+function listAllImageKeys(){
+  return new Promise(res=>{
+    if(!db){ res(new Set()); return; }
+    const out = new Set();
+    const tx = db.transaction("imgs","readonly");
+    tx.objectStore("imgs").openKeyCursor().onsuccess = e=>{
+      const c = e.target.result;
+      if(!c){ res(out); return; }
+      out.add(c.key);
+      c.continue();
+    };
+  });
+}
+
+async function markAllStepsWithoutImages(){
+  const keys = await listAllImageKeys();
+  const stepsWithImg = new Set();
+  for(const k of keys){
+    if(k.startsWith("step:")){
+      const parts = k.split(":");
+      // step:CID:IDX:tail
+      stepsWithImg.add(parts[1]+":"+parts[2]);
+    }
+  }
+  document.querySelectorAll(".step").forEach(stepEl=>{
+    const k = stepEl.dataset.key;
+    if(stepsWithImg.has(k)) stepEl.classList.remove("no-images");
+    else stepEl.classList.add("no-images");
+  });
+}
+
+async function markStepsWithoutImages(cid){
+  const keys = await listAllImageKeys();
+  const stepsWithImg = new Set();
+  for(const k of keys){
+    if(k.startsWith(`step:${cid}:`)){
+      const parts = k.split(":");
+      stepsWithImg.add(parts[1]+":"+parts[2]);
+    }
+  }
+  document.querySelectorAll(`.case[data-cid="${cid}"] .step`).forEach(stepEl=>{
+    const k = stepEl.dataset.key;
+    if(stepsWithImg.has(k)) stepEl.classList.remove("no-images");
+    else stepEl.classList.add("no-images");
+  });
+}
+
+async function printCase(cid){
+  try{
+    const caseEl = document.querySelector(`.case[data-cid="${cid}"]`);
+    if(!caseEl){ toast("Caso não encontrado","err"); return; }
+    const phaseEl = caseEl.closest(".phase");
+    await markStepsWithoutImages(cid);
+    document.querySelectorAll(".print-target").forEach(el=>el.classList.remove("print-target"));
+    caseEl.classList.add("print-target","open");
+    phaseEl.classList.add("print-target","open");
+    document.body.classList.add("print-evidence");
+    document.body.dataset.printCase = cid;
+    toast("Diálogo de impressão: desmarque \"Cabeçalhos e rodapés\"","warn",4500);
+    setTimeout(()=> window.print(), 250);
+  } catch(err){
+    toast("Erro: "+err.message,"err");
+    cleanupPrint();
+  }
+}
+
+async function printGeneral(){
+  try{
+    if(!db){ toast("Aguardando carregamento das imagens…","warn"); return; }
+    document.querySelectorAll(".phase, .case").forEach(el=> el.classList.add("open"));
+    await markAllStepsWithoutImages();
+    // Build cover
+    const tbody = document.getElementById("cover-table");
+    tbody.innerHTML = PHASES.map(p=>{
+      let pass=0,fail=0,na=0,total=0,cases=p.cases.length;
+      for(const c of p.cases) for(let i=0;i<c.steps.length;i++){
+        total++;
+        const st = getS(`${c.id}:${i}`);
+        if(st.status==="pass") pass++;
+        else if(st.status==="fail") fail++;
+        else if(st.status==="na") na++;
+      }
+      const todo = total-pass-fail-na;
+      return `<tr><td>${esc(p.title)}</td><td>${cases}</td><td>${total}</td><td>${pass}</td><td>${fail}</td><td>${todo}</td></tr>`;
+    }).join("");
+    document.getElementById("cover-meta").textContent =
+      `Gerado em ${new Date().toLocaleString("pt-BR")} · Evidências de execução`;
+    document.getElementById("print-cover").classList.add("show");
+    document.body.classList.add("print-evidence");
+    toast("Diálogo de impressão: desmarque \"Cabeçalhos e rodapés\"","warn",4500);
+    setTimeout(()=> window.print(), 250);
+  } catch(err){
+    toast("Erro: "+err.message,"err");
+    cleanupPrint();
+  }
+}
+
+/* ============ Filters & search ============ */
+function applyFilters(){
+  let visibleCases = 0;
+  for(const p of PHASES){
+    let phaseHasVisible = false;
+    for(const c of p.cases){
+      const caseEl = document.querySelector(`.case[data-cid="${c.id}"]`);
+      if(!caseEl) continue;
+      const cs = caseStatus(c);
+      let show = true;
+      // filter
+      if(currentFilter !== "all"){
+        if(currentFilter === "todo" && cs.cls !== "todo") show = false;
+        else if(currentFilter === "progress" && cs.cls !== "progress") show = false;
+        else if(currentFilter === "ok" && cs.cls !== "ok") show = false;
+        else if(currentFilter === "fail" && cs.cls !== "fail") show = false;
+      }
+      // search
+      if(show && currentSearch){
+        const hay = (c.id + " " + c.title).toLowerCase();
+        if(!hay.includes(currentSearch)) show = false;
+      }
+      caseEl.classList.toggle("hidden", !show);
+      if(show){ phaseHasVisible = true; visibleCases++ }
+    }
+    const phaseEl = document.querySelector(`.phase[data-pid="${p.id}"]`);
+    if(phaseEl) phaseEl.classList.toggle("hidden", !phaseHasVisible);
+  }
+}
+
+/* ============ Buttons ============ */
+document.getElementById("expand").onclick = ()=>{
+  document.querySelectorAll(".phase, .case").forEach(el=>{
+    el.classList.add("open");
+    if(el.classList.contains("phase")) openState["p_"+el.dataset.pid] = true;
+    else openState["c_"+el.dataset.cid] = true;
+  });
+  saveOpen();
+  toast("Tudo expandido");
+};
+document.getElementById("collapse").onclick = ()=>{
+  document.querySelectorAll(".phase, .case").forEach(el=>{
+    el.classList.remove("open");
+    if(el.classList.contains("phase")) openState["p_"+el.dataset.pid] = false;
+    else openState["c_"+el.dataset.cid] = false;
+  });
+  saveOpen();
+  toast("Tudo recolhido");
+};
+document.getElementById("print-general").addEventListener("click", e=>{
+  e.preventDefault(); e.stopPropagation();
+  console.log("[print-general] clicked");
+  printGeneral();
+});
+
+document.getElementById("export-data").onclick = async ()=>{
+  toast("Gerando backup…");
+  const imgs = await new Promise(res=>{
+    const out = {};
+    const tx = db.transaction("imgs","readonly");
+    tx.objectStore("imgs").openCursor().onsuccess = e=>{
+      const c = e.target.result;
+      if(!c){ res(out); return; }
+      out[c.key] = c.value.dataUrl;
+      c.continue();
+    };
+  });
+  const blob = new Blob([JSON.stringify({state, captions, imgs}, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `e350-tests-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  toast("Backup salvo","ok");
+};
+
+document.getElementById("import-data").onclick = ()=> document.getElementById("imp-file").click();
+document.getElementById("imp-file").onchange = async e=>{
+  const f = e.target.files[0]; if(!f) return;
+  if(!confirm("Importar backup? Sobrescreve o estado atual.")) return;
+  const txt = await f.text();
+  try{
+    const obj = JSON.parse(txt);
+    if(obj.state){ Object.assign(state, obj.state); save(); }
+    if(obj.captions){ Object.assign(captions, obj.captions); saveCaps(); }
+    if(obj.imgs){
+      let n = 0;
+      for(const [id, dataUrl] of Object.entries(obj.imgs)){
+        await imgPut(id, dataUrl); n++;
+      }
+      toast(`${n} imagens importadas`,"ok");
+    }
+    render();
+    toast("Backup restaurado","ok");
+  } catch(err){
+    toast("Erro: " + err.message, "err");
+  }
+};
+
+/* ============ Keyboard shortcuts ============ */
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape" && document.getElementById("lb").classList.contains("show")){
+    document.getElementById("lb").classList.remove("show"); return;
+  }
+  if(e.key === "/" && !["INPUT","TEXTAREA"].includes(document.activeElement.tagName)){
+    e.preventDefault();
+    document.getElementById("search").focus();
+  }
+  if(e.key === "p" && (e.ctrlKey||e.metaKey)){
+    e.preventDefault();
+    printGeneral();
+  }
+});
+
+/* ============ FAB back-to-top ============ */
+window.addEventListener("scroll", ()=>{
+  document.getElementById("fab").classList.toggle("show", window.scrollY > 400);
+});
+document.getElementById("fab").onclick = ()=> window.scrollTo({top:0,behavior:"smooth"});
+
+render();
+</script>
+</body>
+</html>

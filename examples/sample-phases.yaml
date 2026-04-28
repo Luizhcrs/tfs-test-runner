@@ -1,0 +1,30 @@
+# Example phases.yaml — group cases into phases by ID list and/or keyword match.
+#
+# Each phase has:
+#   id:        short slug, used as DOM id
+#   title:     visible header
+#   level:     easy | med | hard (drives badge color, purely informational)
+#   desc:      one-line description shown under the header
+#   case_ids:  explicit list of case IDs to include
+#   match:     list of case-insensitive substrings; matches against the case title
+#
+# Cases not matched by any phase land in an automatic "Others" phase at the end.
+
+phases:
+  - id: "p1"
+    title: "Phase 1 — Smoke / happy path"
+    level: easy
+    desc: "Critical positive scenarios run on every build."
+    case_ids: ["101"]
+
+  - id: "p2"
+    title: "Phase 2 — Failure scenarios"
+    level: med
+    desc: "Negative paths and error handling."
+    match: ["failure", "invalid", "error"]
+
+  - id: "p3"
+    title: "Phase 3 — Form validation"
+    level: med
+    desc: "Required fields, bounds, format checks."
+    match: ["validation", "form"]

@@ -1,0 +1,72 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# Editors / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Generated outputs (never commit user data or rendered plans)
+*.html
+!tfs_test_runner/template/*.html
+plano-*.html
+test-plan*.html
+out*.html
+test-out*.html
+
+# Sensitive / customer data — never commit
+*.xlsx
+!examples/sample.xlsx
+*.docx
+*.pdf
+dump.csv
+testcases.json
+testcases_*.json
+
+# Logs
+*.log
+
+# Local secrets
+.env
+.env.*
+!.env.example

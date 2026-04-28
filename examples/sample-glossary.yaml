@@ -1,0 +1,18 @@
+# Example glossary.yaml — refines LLM translation behavior.
+#
+# preserve: list of terms the model must keep verbatim (UI labels, tech terms).
+# notes:    free-text appended to the system prompt for domain context.
+
+preserve:
+  - "Sign In"
+  - "Save"
+  - "Cancel"
+  - "Profile"
+  - "Email"
+  - "Password"
+  - "Full Name"
+
+notes: |
+  Domain: web application QA testing. Users execute test cases manually.
+  Tone: technical, imperative ("Click", "Type", "Verify").
+  Keep button labels in the original language (English) since the UI is English.

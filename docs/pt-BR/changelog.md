@@ -5,30 +5,6 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [1.2.0] — 2026-04-28
-
-### Added
-- **Documentation site** powered by MkDocs Material at
-  [luizhcrs.github.io/tfs-test-runner](https://luizhcrs.github.io/tfs-test-runner/),
-  with bilingual content (EN + PT-BR) via `mkdocs-static-i18n`. Pages: Home,
-  Quickstart, Usage, Configuration, Architecture, Contributing, Changelog.
-  Material theme with dark/light toggle, search, code-copy buttons.
-- **Blank xlsx template** at `examples/blank-template.xlsx` for users
-  without an Azure DevOps export. Includes header comments documenting each
-  column's expected content. Regenerate via `python examples/generate_blank_template.py`.
-- **GitHub Actions docs workflow** (`.github/workflows/docs.yml`) builds
-  MkDocs and deploys to GitHub Pages on every push to `main` that touches
-  `docs/` or `mkdocs.yml`.
-- New logo SVG and favicon PNG at `docs/assets/`.
-
-### Changed
-- Reorganized `docs/` into `docs/en/` and `docs/pt-BR/` subfolders to match
-  i18n plugin's "folder" structure. Old flat `docs/USAGE.md` and
-  `docs/ARCHITECTURE.md` removed.
-- README and README.pt-BR: added Docs badge, link to hosted docs site,
-  call-out section for the blank template option.
-- `.gitignore`: ignore `site/` (MkDocs build output).
-
 ## [1.1.0] — 2026-04-28
 
 ### Added

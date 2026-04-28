@@ -3,9 +3,12 @@
 > Converte exports `xlsx` de test cases do **Azure DevOps / TFS** em um **kit HTML auto-contido** com captura de screenshots, status, anotações e PDF de evidência. Sem servidor, funciona offline. Tradução GPT opcional.
 
 [![Tests](https://github.com/luizhcrs/tfs-test-runner/actions/workflows/test.yml/badge.svg)](https://github.com/luizhcrs/tfs-test-runner/actions/workflows/test.yml)
+[![Docs](https://github.com/Luizhcrs/tfs-test-runner/actions/workflows/docs.yml/badge.svg)](https://luizhcrs.github.io/tfs-test-runner/pt-BR/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![English](https://img.shields.io/badge/lang-en-blue)](README.md)
+
+📖 **Documentação completa**: [luizhcrs.github.io/tfs-test-runner/pt-BR](https://luizhcrs.github.io/tfs-test-runner/pt-BR/) ([EN](https://luizhcrs.github.io/tfs-test-runner/))
 
 | Visão geral + filtros | Caso com evidências |
 |---|---|
@@ -43,6 +46,10 @@ tfs-test-runner examples/sample.xlsx -o sample-out.html
 ```
 
 Sem API key. O tester cola screenshots (Ctrl+V) a cada step, marca PASS/FAIL/N/A, escreve observações, clica **PDF** pra entregável.
+
+### Sem Azure DevOps? Use o template em branco
+
+Sem export? Baixa o [template xlsx em branco](examples/blank-template.xlsx) (`python examples/generate_blank_template.py` regenera) e preenche manualmente — mesmo schema do **Test Plans → Export to Excel** do Azure DevOps.
 
 ## Flags comuns
 

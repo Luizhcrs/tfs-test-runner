@@ -21,7 +21,7 @@ tfs-test-runner meu-export.xlsx -o plano.html
 Abrir `plano.html` no Chrome, Edge ou Firefox.
 
 ### Com agrupamento em fases
-Criar `phases.yaml` listando quais case IDs vão pra cada fase. Ver [examples/sample-phases.yaml](../examples/sample-phases.yaml). Daí:
+Criar `phases.yaml` listando quais case IDs vão pra cada fase. Ver [examples/sample-phases.yaml](https://github.com/Luizhcrs/tfs-test-runner/blob/main/examples/sample-phases.yaml). Daí:
 ```bash
 tfs-test-runner meu-export.xlsx --phases phases.yaml -o plano.html
 ```

@@ -55,6 +55,9 @@ out*.html
 test-out*.html
 docs/_screenshot-sample.html
 
+# MkDocs build output
+site/
+
 # Sensitive / customer data — never commit
 *.xlsx
 !examples/sample.xlsx

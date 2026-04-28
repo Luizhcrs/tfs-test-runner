@@ -21,7 +21,7 @@ tfs-test-runner my-export.xlsx -o plan.html
 Open `plan.html` in Chrome, Edge, or Firefox.
 
 ### With phase grouping
-Create a `phases.yaml` that lists which case IDs belong to which phase. See [examples/sample-phases.yaml](../examples/sample-phases.yaml). Then:
+Create a `phases.yaml` that lists which case IDs belong to which phase. See [examples/sample-phases.yaml](https://github.com/Luizhcrs/tfs-test-runner/blob/main/examples/sample-phases.yaml). Then:
 ```bash
 tfs-test-runner my-export.xlsx --phases phases.yaml -o plan.html
 ```

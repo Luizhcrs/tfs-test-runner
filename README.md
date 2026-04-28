@@ -5,6 +5,28 @@
 [![Tests](https://github.com/luizhcrs/tfs-test-runner/actions/workflows/test.yml/badge.svg)](https://github.com/luizhcrs/tfs-test-runner/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Read in PT-BR](https://img.shields.io/badge/lang-pt--BR-success)](README.pt-BR.md)
+
+## Screenshots
+
+| Overview with progress + filters | Single case w/ evidence + status |
+|---|---|
+| ![Hero with progress](docs/images/02-hero-progress.png) | ![Case detail](docs/images/04-case-detail.png) |
+
+| Filter chips (Failures only) | Print / PDF evidence layout |
+|---|---|
+| ![Failure filter](docs/images/05-filter-failures.png) | ![PDF evidence](docs/images/06-pdf-evidence.png) |
+
+<details>
+<summary><b>More screenshots</b> (full plan, narrow viewport, empty state)</summary>
+
+| Empty state (right after build) | Narrow / mobile-ish viewport |
+|---|---|
+| ![Empty state](docs/images/01-empty-overview.png) | ![Narrow](docs/images/07-narrow-view.png) |
+
+Full plan (long page screenshot): [03-full-plan.png](docs/images/03-full-plan.png)
+
+</details>
 
 ## Why
 

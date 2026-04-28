@@ -53,6 +53,7 @@ plano-*.html
 test-plan*.html
 out*.html
 test-out*.html
+docs/_screenshot-sample.html
 
 # Sensitive / customer data — never commit
 *.xlsx

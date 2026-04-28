@@ -5,6 +5,32 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.3.0] — 2026-04-28
+
+### Added
+- **Light theme** with a complete CSS-variable override set; alongside the
+  existing **dark theme** and a new **auto** mode that follows the OS
+  `prefers-color-scheme`. Theme is set via `:root[data-theme="light|dark|auto"]`
+  on the document root.
+- **Settings panel** (gear icon ⚙ in the toolbar) groups configurable options
+  in one floating dialog:
+  - Theme selector (Auto / Light / Dark) as radio buttons
+  - "Show status in PDF" checkbox (replaces the old standalone toolbar toggle)
+  - Keyboard-shortcut reference inline
+  - Closes on backdrop click or `Esc`
+- New screenshots `08-light-theme.png` and `09-settings-panel.png`.
+
+### Changed
+- Removed the standalone "Status no PDF" toolbar checkbox; the same control
+  lives inside the new settings panel. Existing localStorage value
+  (`*-status-pdf`) is reused, so user preferences carry over.
+- README and docs site (EN + PT-BR) updated with the new screenshots and
+  the consolidated "Settings panel" feature description.
+- `Esc` keyboard shortcut now closes the settings panel as well as the
+  lightbox.
+- `screenshots.py` regenerated 8 → 10 screenshots; adds light theme and
+  settings panel views.
+
 ## [1.2.0] — 2026-04-28
 
 ### Added

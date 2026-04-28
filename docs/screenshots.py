@@ -164,7 +164,22 @@ async def capture_all():
         await page.emulate_media(media="screen")
         await page.evaluate("document.body.classList.remove('print-evidence','show-status-pdf')")
 
-        # 8) Mobile-ish narrow view
+        # 8) Light theme
+        await page.evaluate("document.documentElement.dataset.theme = 'light'")
+        await page.wait_for_timeout(200)
+        await page.screenshot(path=str(OUT_DIR / "08-light-theme.png"), full_page=False)
+
+        # 9) Settings panel open (on light theme — looks cleaner)
+        await page.evaluate("document.getElementById('settings-overlay').hidden = false")
+        await page.wait_for_timeout(250)
+        await page.screenshot(path=str(OUT_DIR / "09-settings-panel.png"), full_page=False)
+        await page.evaluate("document.getElementById('settings-overlay').hidden = true")
+
+        # back to dark
+        await page.evaluate("document.documentElement.dataset.theme = 'dark'")
+        await page.wait_for_timeout(200)
+
+        # 10) Mobile-ish narrow view (dark)
         await page.set_viewport_size({"width": 480, "height": 900})
         await page.reload()
         await page.wait_for_selector(".case.open")

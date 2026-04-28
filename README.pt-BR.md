@@ -10,9 +10,13 @@
 
 📖 **Documentação completa**: [luizhcrs.github.io/tfs-test-runner/pt-BR](https://luizhcrs.github.io/tfs-test-runner/pt-BR/) ([EN](https://luizhcrs.github.io/tfs-test-runner/))
 
-| Visão geral + filtros | Caso com evidências |
+| Tema escuro (default) | Tema claro |
 |---|---|
-| ![Hero](docs/images/02-hero-progress.png) | ![Caso](docs/images/04-case-detail.png) |
+| ![Hero dark](docs/images/02-hero-progress.png) | ![Tema claro](docs/images/08-light-theme.png) |
+
+| Painel de configurações (tema + PDF) | Caso detalhado com evidências |
+|---|---|
+| ![Configurações](docs/images/09-settings-panel.png) | ![Caso](docs/images/04-case-detail.png) |
 
 <details>
 <summary><b>Mais screenshots</b> — filtro com falha, PDF, PDF com status, plano cheio, mobile, vazio</summary>
@@ -74,9 +78,9 @@ tfs-test-runner --help
 - Por step: **PASS / FAIL / N/A**, observação, paste/drop/pick de screenshot
 - Legenda por imagem, lightbox zoom
 - **PDF por caso** (só evidências) e **PDF do plano completo** com capa
-- Toggle **"Status no PDF"** — mostra selos PASS/FAIL/N/A no PDF quando precisar
+- **Painel de configurações** (ícone engrenagem): tema claro/escuro/auto + toggle status no PDF
 - Backup/restore JSON (estado + imagens)
-- Atalhos: `/` busca, `Ctrl+P` PDF, `Esc` fecha lightbox
+- Atalhos: `/` busca, `Ctrl+P` PDF, `Esc` fecha lightbox/painel
 
 > 💡 No diálogo de impressão, **desmarque "Cabeçalhos e rodapés"** pra evitar `file:///…` e data/hora em cada página.
 

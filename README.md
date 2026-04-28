@@ -10,9 +10,13 @@
 
 📖 **Full docs**: [luizhcrs.github.io/tfs-test-runner](https://luizhcrs.github.io/tfs-test-runner/) ([PT-BR](https://luizhcrs.github.io/tfs-test-runner/pt-BR/))
 
-| Overview + filters | Case w/ evidence |
+| Dark theme (default) | Light theme |
 |---|---|
-| ![Hero](docs/images/02-hero-progress.png) | ![Case](docs/images/04-case-detail.png) |
+| ![Hero dark](docs/images/02-hero-progress.png) | ![Light theme](docs/images/08-light-theme.png) |
+
+| Settings panel (theme + PDF options) | Case detail with evidence |
+|---|---|
+| ![Settings](docs/images/09-settings-panel.png) | ![Case](docs/images/04-case-detail.png) |
 
 <details>
 <summary><b>More screenshots</b> — failures filter, PDF evidence, PDF with status badges, full plan, mobile, empty state</summary>
@@ -74,9 +78,9 @@ tfs-test-runner --help
 - Per-step **PASS / FAIL / N/A**, notes textarea, paste/drop/pick screenshot
 - Per-image captions, lightbox zoom
 - **Per-case PDF** (evidence-only) and **full-plan PDF** with cover sheet
-- **"Status no PDF"** toggle — show PASS/FAIL/N/A pills in the PDF when needed
+- **Settings panel** (gear icon): light/dark/auto theme + status-in-PDF toggle
 - JSON backup/restore (state + images)
-- Keyboard: `/` search, `Ctrl+P` PDF, `Esc` close lightbox
+- Keyboard: `/` search, `Ctrl+P` PDF, `Esc` close lightbox/settings
 
 > 💡 In the print dialog, **uncheck "Headers and footers"** so the browser doesn't inject `file:///…` and date/time at every page.
 

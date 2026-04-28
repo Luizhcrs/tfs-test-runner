@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{{ page_title }}</title>
 <style>
-  :root{
+  :root, :root[data-theme="dark"]{
     {% if logo_url %}--logo-url:url("{{ logo_url }}");{% endif %}
     --bg:#0b0e14; --panel:#141821; --panel2:#1c2230; --panel3:#252c3d;
     --border:#2d3548; --border2:#3a435c;
@@ -16,6 +16,34 @@
     --danger:#f85149; --danger-bg:#3a1010;
     --na:#6e7787; --na-bg:#22283a;
     --shadow:0 8px 32px rgba(0,0,0,.4);
+    color-scheme: dark;
+  }
+  :root[data-theme="light"]{
+    --bg:#f6f8fb; --panel:#ffffff; --panel2:#f0f3f7; --panel3:#e6ebf2;
+    --border:#d6dde6; --border2:#bdc6d3;
+    --text:#1a1f2e; --muted:#5a6478; --muted2:#9aa3b3;
+    --accent:#4f7eed; --accent-h:#3a6cdc;
+    --ok:#1b8a3a; --ok-bg:#dcf3e3;
+    --warn:#a87605; --warn-bg:#fbf1d2;
+    --danger:#c63232; --danger-bg:#fbe1e0;
+    --na:#6e7787; --na-bg:#e6e9ef;
+    --shadow:0 6px 24px rgba(20,30,55,.10);
+    color-scheme: light;
+  }
+  /* Auto: follow OS preference if user picked Auto */
+  @media (prefers-color-scheme: light){
+    :root[data-theme="auto"]{
+      --bg:#f6f8fb; --panel:#ffffff; --panel2:#f0f3f7; --panel3:#e6ebf2;
+      --border:#d6dde6; --border2:#bdc6d3;
+      --text:#1a1f2e; --muted:#5a6478; --muted2:#9aa3b3;
+      --accent:#4f7eed; --accent-h:#3a6cdc;
+      --ok:#1b8a3a; --ok-bg:#dcf3e3;
+      --warn:#a87605; --warn-bg:#fbf1d2;
+      --danger:#c63232; --danger-bg:#fbe1e0;
+      --na:#6e7787; --na-bg:#e6e9ef;
+      --shadow:0 6px 24px rgba(20,30,55,.10);
+      color-scheme: light;
+    }
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
@@ -269,6 +297,64 @@
     width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;
   }
 
+  /* Settings panel */
+  .settings-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.55);
+    display:flex;align-items:flex-start;justify-content:flex-end;
+    z-index:90;padding:60px 20px;animation:fadeIn .15s ease-out;
+  }
+  .settings-overlay[hidden]{display:none}
+  .settings-panel{
+    background:var(--panel);border:1px solid var(--border);
+    border-radius:10px;width:380px;max-width:100%;max-height:80vh;
+    overflow:hidden;box-shadow:var(--shadow);
+    display:flex;flex-direction:column;animation:slideRight .2s ease-out;
+  }
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes slideRight{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
+  .settings-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:13px 16px;border-bottom:1px solid var(--border);
+  }
+  .settings-head h3{margin:0;font-size:14px;font-weight:600}
+  .settings-close{
+    background:transparent;border:none;color:var(--muted);
+    font-size:20px;cursor:pointer;padding:0 6px;line-height:1;
+  }
+  .settings-close:hover{color:var(--text)}
+  .settings-body{padding:14px 16px;overflow-y:auto;flex:1}
+  .settings-group{margin-bottom:18px}
+  .settings-group:last-child{margin-bottom:0}
+  .settings-label{
+    display:block;font-size:11px;font-weight:600;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;
+  }
+  .settings-radios{display:flex;flex-direction:column;gap:6px}
+  .settings-radios label{
+    display:flex;align-items:center;gap:8px;padding:7px 10px;
+    background:var(--panel2);border:1px solid var(--border);border-radius:6px;
+    cursor:pointer;font-size:13px;transition:.15s;
+  }
+  .settings-radios label:hover{border-color:var(--accent)}
+  .settings-radios input{accent-color:var(--accent);cursor:pointer}
+  .settings-radios input:checked + span{color:var(--accent);font-weight:500}
+  .settings-row{
+    display:flex;gap:10px;padding:10px;
+    background:var(--panel2);border:1px solid var(--border);border-radius:6px;
+    cursor:pointer;align-items:flex-start;
+  }
+  .settings-row input{accent-color:var(--accent);cursor:pointer;margin-top:2px}
+  .settings-row b{display:block;font-size:13px;font-weight:500;line-height:1.3}
+  .settings-row small{display:block;color:var(--muted);font-size:11px;margin-top:3px;line-height:1.4}
+  .settings-help{
+    list-style:none;padding:0;margin:0;font-size:12px;color:var(--muted);
+    display:flex;flex-direction:column;gap:5px;
+  }
+  .settings-help kbd{
+    background:var(--panel2);border:1px solid var(--border);
+    padding:1px 6px;border-radius:3px;font-size:11px;color:var(--text);
+  }
+
   /* Toast */
   .toasts{position:fixed;bottom:18px;right:18px;display:flex;flex-direction:column;gap:8px;z-index:200}
   .toast{
@@ -503,9 +589,7 @@
       <button id="collapse">Recolher</button>
       <button id="export-data">Exportar backup</button>
       <button id="import-data">Importar backup</button>
-      <label class="toggle" title="Mostrar selo PASS/FAIL/N/A em cada step no PDF">
-        <input type="checkbox" id="toggle-status-pdf"> <span>Status no PDF</span>
-      </label>
+      <button id="open-settings" title="Configurações" aria-label="Configurações">⚙ Configurações</button>
       <button class="primary" id="print-general" title="Imprimir / salvar PDF de evidência geral (Ctrl+P)">PDF Geral (evidências)</button>
     </div>
   </div>
@@ -548,6 +632,43 @@
   <button class="lb-close" id="lb-close">×</button>
   <img id="lb-img">
   <div class="lb-cap" id="lb-cap" contenteditable="true" spellcheck="false">Clique para editar legenda…</div>
+</div>
+
+<div class="settings-overlay no-print" id="settings-overlay" hidden>
+  <div class="settings-panel" role="dialog" aria-label="Configurações">
+    <div class="settings-head">
+      <h3>Configurações</h3>
+      <button class="settings-close" id="settings-close" aria-label="Fechar">×</button>
+    </div>
+    <div class="settings-body">
+      <section class="settings-group">
+        <label class="settings-label">Tema</label>
+        <div class="settings-radios" id="theme-radios">
+          <label><input type="radio" name="theme" value="auto"> <span>Auto (sistema)</span></label>
+          <label><input type="radio" name="theme" value="light"> <span>Claro</span></label>
+          <label><input type="radio" name="theme" value="dark"> <span>Escuro</span></label>
+        </div>
+      </section>
+      <section class="settings-group">
+        <label class="settings-label">PDF</label>
+        <label class="settings-row">
+          <input type="checkbox" id="toggle-status-pdf">
+          <span>
+            <b>Mostrar status no PDF</b>
+            <small>Adiciona selos PASS / FAIL / N/A em cada step e linha-resumo por caso.</small>
+          </span>
+        </label>
+      </section>
+      <section class="settings-group">
+        <label class="settings-label">Atalhos</label>
+        <ul class="settings-help">
+          <li><kbd>/</kbd> foca busca</li>
+          <li><kbd>Ctrl</kbd>+<kbd>P</kbd> PDF geral</li>
+          <li><kbd>Esc</kbd> fecha lightbox/painel</li>
+        </ul>
+      </section>
+    </div>
+  </div>
 </div>
 
 <button class="fab no-print" id="fab" title="Voltar ao topo">↑</button>
@@ -1200,18 +1321,57 @@ function applyFilters(){
   }
 }
 
-/* ============ Toggle: status badges in PDF ============ */
+/* ============ Settings: theme + status-in-pdf ============ */
+let currentTheme = localStorage.getItem(KEY+"-theme") || "auto";
+
+function applyTheme(theme){
+  currentTheme = theme;
+  document.documentElement.dataset.theme = theme;
+  localStorage.setItem(KEY+"-theme", theme);
+  document.querySelectorAll('input[name="theme"]').forEach(r=>{
+    r.checked = (r.value === theme);
+  });
+}
+
 function applyShowStatusInPdf(){
   document.body.classList.toggle("show-status-pdf", showStatusInPdf);
   const cb = document.getElementById("toggle-status-pdf");
   if(cb) cb.checked = showStatusInPdf;
 }
+
+applyTheme(currentTheme);
 applyShowStatusInPdf();
-document.getElementById("toggle-status-pdf").addEventListener("change", e=>{
+
+document.getElementById("toggle-status-pdf")?.addEventListener("change", e=>{
   showStatusInPdf = e.target.checked;
   localStorage.setItem(KEY+"-status-pdf", showStatusInPdf ? "1" : "0");
   applyShowStatusInPdf();
   toast(showStatusInPdf ? "Status no PDF: ATIVO" : "Status no PDF: oculto");
+});
+
+document.querySelectorAll('input[name="theme"]').forEach(r=>{
+  r.addEventListener("change", e=>{
+    if(e.target.checked){
+      applyTheme(e.target.value);
+      const labels = {auto:"Auto (sistema)", light:"Claro", dark:"Escuro"};
+      toast("Tema: " + (labels[e.target.value] || e.target.value));
+    }
+  });
+});
+
+/* Settings panel open/close */
+const settingsOverlay = document.getElementById("settings-overlay");
+function openSettings(){
+  settingsOverlay.hidden = false;
+  // ensure radios reflect current state
+  applyTheme(currentTheme);
+  applyShowStatusInPdf();
+}
+function closeSettings(){ settingsOverlay.hidden = true; }
+document.getElementById("open-settings")?.addEventListener("click", openSettings);
+document.getElementById("settings-close")?.addEventListener("click", closeSettings);
+settingsOverlay?.addEventListener("click", e=>{
+  if(e.target === settingsOverlay) closeSettings();
 });
 
 /* ============ Buttons ============ */
@@ -1284,8 +1444,13 @@ document.getElementById("imp-file").onchange = async e=>{
 
 /* ============ Keyboard shortcuts ============ */
 document.addEventListener("keydown", e=>{
-  if(e.key === "Escape" && document.getElementById("lb").classList.contains("show")){
-    document.getElementById("lb").classList.remove("show"); return;
+  if(e.key === "Escape"){
+    if(document.getElementById("lb").classList.contains("show")){
+      document.getElementById("lb").classList.remove("show"); return;
+    }
+    if(settingsOverlay && !settingsOverlay.hidden){
+      closeSettings(); return;
+    }
   }
   if(e.key === "/" && !["INPUT","TEXTAREA"].includes(document.activeElement.tagName)){
     e.preventDefault();

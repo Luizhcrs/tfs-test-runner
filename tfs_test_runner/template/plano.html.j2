@@ -56,6 +56,16 @@
   button.danger{color:var(--danger);border-color:var(--danger-bg)}
   button.danger:hover{background:var(--danger-bg)}
   button.tiny{padding:3px 8px;font-size:11px}
+  .toggle{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--panel2);color:var(--text);border:1px solid var(--border);
+    padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;user-select:none;
+  }
+  .toggle:hover{background:var(--panel3);border-color:var(--border2)}
+  .toggle input[type=checkbox]{
+    margin:0;width:13px;height:13px;cursor:pointer;accent-color:var(--accent);
+  }
+  .toggle input:checked + span{color:var(--accent);font-weight:500}
   .search{
     flex:1;min-width:200px;max-width:380px;
     background:var(--panel2);border:1px solid var(--border);border-radius:6px;
@@ -405,6 +415,30 @@
     }
     body.print-evidence .step-en-label .lab{display:none}
 
+    /* PDF status badges — only when "Status no PDF" toggle is on */
+    body.print-evidence.show-status-pdf .step.s-pass .step-en-label::before,
+    body.print-evidence.show-status-pdf .step.s-fail .step-en-label::before,
+    body.print-evidence.show-status-pdf .step.s-na   .step-en-label::before {
+      display:inline-block;font-size:10px;font-weight:700;
+      padding:1px 6px;border-radius:3px;margin-right:6px;
+      vertical-align:middle;letter-spacing:.4px;
+    }
+    body.print-evidence.show-status-pdf .step.s-pass .step-en-label::before {
+      content:"PASS";color:#fff;background:#0a7a2a;
+    }
+    body.print-evidence.show-status-pdf .step.s-fail .step-en-label::before {
+      content:"FAIL";color:#fff;background:#a01010;
+    }
+    body.print-evidence.show-status-pdf .step.s-na .step-en-label::before {
+      content:"N/A";color:#fff;background:#666;
+    }
+    /* Per-case PASS/FAIL summary line in PDF when toggle is on */
+    body.print-evidence.show-status-pdf .case-head::after {
+      content:attr(data-pdf-summary);
+      display:block;font-size:10px;color:#444;
+      margin:4px 0 8px;letter-spacing:.3px;
+    }
+
     /* image flow: one image per row, full width, captioned above */
     body.print-evidence .thumbs{
       display:block !important;margin:0;padding:0;
@@ -469,6 +503,9 @@
       <button id="collapse">Recolher</button>
       <button id="export-data">Exportar backup</button>
       <button id="import-data">Importar backup</button>
+      <label class="toggle" title="Mostrar selo PASS/FAIL/N/A em cada step no PDF">
+        <input type="checkbox" id="toggle-status-pdf"> <span>Status no PDF</span>
+      </label>
       <button class="primary" id="print-general" title="Imprimir / salvar PDF de evidência geral (Ctrl+P)">PDF Geral (evidências)</button>
     </div>
   </div>
@@ -525,6 +562,7 @@ const openState = JSON.parse(localStorage.getItem(KEY+"-open") || "{}");
 const captions = JSON.parse(localStorage.getItem(KEY+"-cap") || "{}");
 let currentFilter = "all";
 let currentSearch = "";
+let showStatusInPdf = localStorage.getItem(KEY+"-status-pdf") === "1";
 
 function save(){ localStorage.setItem(KEY, JSON.stringify(state)) }
 function saveOpen(){ localStorage.setItem(KEY+"-open", JSON.stringify(openState)) }
@@ -701,9 +739,10 @@ function renderCase(c){
     return '<span class="dot" title="Pendente"></span>';
   }).join("");
 
+  const pdfSummary = `${cs.done}/${cs.total} steps · ${cs.pass} PASS · ${cs.fail} FAIL · ${cs.na} N/A`;
   return `
     <article class="case ${open?"open":""}" data-cid="${c.id}" data-status="${cs.cls}">
-      <header class="case-head">
+      <header class="case-head" data-pdf-summary="${esc(pdfSummary)}">
         <span class="chev">▶</span>
         <span class="id">${esc(c.id)}</span>
         <span class="title" data-cid="${esc(c.id)}">${esc(c.title)}</span>
@@ -791,6 +830,10 @@ function updateCaseHeader(cid){
     return '<span class="dot"></span>';
   }).join("");
   caseEl.querySelector(".case-head .status-bar").innerHTML = dots;
+  const head = caseEl.querySelector(".case-head");
+  if(head){
+    head.dataset.pdfSummary = `${cs.done}/${cs.total} steps · ${cs.pass} PASS · ${cs.fail} FAIL · ${cs.na} N/A`;
+  }
 }
 function updatePhaseHeader(pid){
   const p = PHASES.find(x=>x.id===pid);
@@ -1156,6 +1199,20 @@ function applyFilters(){
     if(phaseEl) phaseEl.classList.toggle("hidden", !phaseHasVisible);
   }
 }
+
+/* ============ Toggle: status badges in PDF ============ */
+function applyShowStatusInPdf(){
+  document.body.classList.toggle("show-status-pdf", showStatusInPdf);
+  const cb = document.getElementById("toggle-status-pdf");
+  if(cb) cb.checked = showStatusInPdf;
+}
+applyShowStatusInPdf();
+document.getElementById("toggle-status-pdf").addEventListener("change", e=>{
+  showStatusInPdf = e.target.checked;
+  localStorage.setItem(KEY+"-status-pdf", showStatusInPdf ? "1" : "0");
+  applyShowStatusInPdf();
+  toast(showStatusInPdf ? "Status no PDF: ATIVO" : "Status no PDF: oculto");
+});
 
 /* ============ Buttons ============ */
 document.getElementById("expand").onclick = ()=>{

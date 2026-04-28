@@ -152,12 +152,17 @@ async def capture_all():
         await page.locator('.chip[data-f="all"]').click()
         await page.wait_for_timeout(300)
 
-        # 7) Print preview emulation (evidence layout)
+        # 7) Print preview emulation (evidence layout — status hidden, default)
         await page.evaluate("document.body.classList.add('print-evidence')")
         await page.emulate_media(media="print")
         await page.screenshot(path=str(OUT_DIR / "06-pdf-evidence.png"), full_page=True)
+
+        # 7b) Same print preview WITH status badges (toggle ON)
+        await page.evaluate("document.body.classList.add('show-status-pdf')")
+        await page.screenshot(path=str(OUT_DIR / "06b-pdf-evidence-status.png"), full_page=True)
+
         await page.emulate_media(media="screen")
-        await page.evaluate("document.body.classList.remove('print-evidence')")
+        await page.evaluate("document.body.classList.remove('print-evidence','show-status-pdf')")
 
         # 8) Mobile-ish narrow view
         await page.set_viewport_size({"width": 480, "height": 900})

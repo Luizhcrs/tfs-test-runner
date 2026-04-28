@@ -17,6 +17,12 @@
 |---|---|
 | ![Filtro falhas](docs/images/05-filter-failures.png) | ![PDF de evidências](docs/images/06-pdf-evidence.png) |
 
+| PDF com selos de status (toggle LIGADO) |
+|---|
+| ![PDF com status](docs/images/06b-pdf-evidence-status.png) |
+
+> ℹ Toggle **"Status no PDF"** no toolbar adiciona selos PASS / FAIL / N/A ao lado de cada step no PDF exportado. Útil pra entregáveis que exigem veredito explícito por step.
+
 <details>
 <summary><b>Mais screenshots</b> (plano cheio, mobile, estado inicial)</summary>
 

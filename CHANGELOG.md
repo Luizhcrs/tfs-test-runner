@@ -5,6 +5,21 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] — 2026-04-28
+
+### Added
+- **Status badges in PDF** (opt-in toggle). New "Status no PDF" toggle in the
+  toolbar adds PASS / FAIL / N/A pills to each step in the exported PDF, plus
+  a per-case summary line ("X/Y steps · A PASS · B FAIL · C N/A"). Default
+  off — preserves the clean evidence-only layout. Preference persists in
+  `localStorage`.
+- New screenshot `06b-pdf-evidence-status.png` showing toggle ON state.
+
+### Changed
+- README + README.pt-BR: added screenshot section for the toggle feature with
+  call-out about when to use it.
+- `screenshots.py` regenerated 7 → 8 screenshots, adds `06b-pdf-evidence-status`.
+
 ## [1.0.0] — 2026-04-28
 
 Initial public release. Generic Azure DevOps / TFS test case xlsx → HTML

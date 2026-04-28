@@ -17,6 +17,12 @@
 |---|---|
 | ![Failure filter](docs/images/05-filter-failures.png) | ![PDF evidence](docs/images/06-pdf-evidence.png) |
 
+| PDF with status badges (toggle ON) |
+|---|
+| ![PDF with status](docs/images/06b-pdf-evidence-status.png) |
+
+> ℹ Toggle **"Status no PDF"** in the toolbar adds PASS / FAIL / N/A pills next to each step in the exported PDF. Useful for client deliverables that need explicit verdict per step.
+
 <details>
 <summary><b>More screenshots</b> (full plan, narrow viewport, empty state)</summary>
 

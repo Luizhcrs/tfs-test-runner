@@ -77,21 +77,21 @@ State persists in `localStorage` (text/status) and `IndexedDB` (images). Backup/
 
 | Overview with progress + filters | Single case w/ evidence + status |
 |---|---|
-| ![Hero](images/02-hero-progress.png) | ![Case](images/04-case-detail.png) |
+| ![Hero](../images/02-hero-progress.png) | ![Case](../images/04-case-detail.png) |
 
 ??? note "More screenshots"
 
     | Filter "Failures" | PDF evidence (default) |
     |---|---|
-    | ![Filter](images/05-filter-failures.png) | ![PDF](images/06-pdf-evidence.png) |
+    | ![Filter](../images/05-filter-failures.png) | ![PDF](../images/06-pdf-evidence.png) |
 
     | PDF with status pills (toggle ON) | Mobile / narrow viewport |
     |---|---|
-    | ![PDF status](images/06b-pdf-evidence-status.png) | ![Narrow](images/07-narrow-view.png) |
+    | ![PDF status](../images/06b-pdf-evidence-status.png) | ![Narrow](../images/07-narrow-view.png) |
 
     | Empty state | Full plan (long screenshot) |
     |---|---|
-    | ![Empty](images/01-empty-overview.png) | [03-full-plan.png](images/03-full-plan.png) |
+    | ![Empty](../images/01-empty-overview.png) | [03-full-plan.png](../images/03-full-plan.png) |
 
 ## Don't have an xlsx yet?
 

@@ -5,6 +5,34 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.1.0] — 2026-04-29
+
+### Added
+- **Mobile / narrow viewport polish.** New `@media (max-width: 640px)` block
+  in the HTML kit reflows the layout for phone screens: actions wrap to
+  two-column grid, search and filter chips stretch full-width, paste-zone
+  becomes vertical with a full-width "Attach file" button, thumbs grid
+  switches to 50/50 columns, settings panel goes full-screen.
+- **CONTRIBUTING.pt-BR.md** — Portuguese translation of the contributing
+  guide for parity with README EN/PT-BR.
+- **`.gitattributes`** — normalizes line endings (LF in repo, native
+  checkout), marks binaries (PNG / JPG / SVG / xlsx / docx / pdf) as
+  binary so Git skips diffs and merges, and tags `docs/`+`examples/` as
+  documentation for GitHub linguist stats.
+
+### Changed
+- **Image footprint reduced 2.8 MB → 1.2 MB** (-58%) via PIL palette
+  quantization (256 colors, Floyd-Steinberg dither). Visually identical
+  for screenshots; no quality loss noticeable.
+- **Image deduplication**: removed `docs/en/images/` and
+  `docs/pt-BR/images/` (~9 MB redundant copies). Only `docs/images/`
+  remains as canonical source. MkDocs i18n indexes use `../images/`
+  paths.
+
+### Deferred to v3.0
+- Full UI i18n (EN strings table + `--ui-lang` flag). Currently the HTML
+  kit's UI strings remain hardcoded in pt-BR.
+
 ## [2.0.0] — 2026-04-29
 
 ### Breaking

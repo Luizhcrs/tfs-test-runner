@@ -382,6 +382,42 @@
   footer{padding:18px;color:var(--muted);font-size:11px;text-align:center}
   footer kbd{background:var(--panel2);border:1px solid var(--border);padding:1px 5px;border-radius:3px;font-size:10px}
 
+  /* ============ MOBILE ============ */
+  @media (max-width: 640px) {
+    main { padding: 12px }
+    header { padding: 8px 12px }
+    .header-row { gap: 8px }
+    .brand h1 { font-size: 13px }
+    .brand .sub { display: none }
+    .actions { width: 100%; flex-wrap: wrap; margin-left: 0 }
+    .actions button { flex: 1 1 calc(50% - 6px); min-width: 0; padding: 7px 6px; font-size: 11px }
+    .search { min-width: 0; flex: 1 1 100% }
+    .stats { font-size: 11px; gap: 6px }
+    .progress { display: none }
+    .filter-chips { gap: 4px }
+    .chip { padding: 3px 8px; font-size: 10px }
+    .case-head { flex-wrap: wrap; gap: 6px }
+    .case-head .title { font-size: 12px }
+    .case-head .status-bar { width: 100%; flex-wrap: wrap }
+    .case-toolbar { flex-direction: column; align-items: stretch }
+    .case-toolbar .meta { margin: 0 0 6px 0 }
+    .case-toolbar button { width: 100% }
+    .step { grid-template-columns: 22px 36px 1fr; gap: 6px; padding: 8px 0 }
+    .step-row { grid-template-columns: 1fr; gap: 6px }
+    .step-tools { flex-direction: column; align-items: stretch }
+    .step-tools .obs { width: 100% }
+    .paste-zone { padding: 14px 8px; font-size: 12px }
+    .pz-text { display: block; margin: 0 0 8px 0 }
+    .pz-pick { width: 100% }
+    .thumbs { gap: 6px }
+    .thumb { width: calc(50% - 3px) }
+    .thumb img { height: 70px }
+    .settings-overlay { padding: 12px; align-items: stretch; justify-content: stretch }
+    .settings-panel { width: 100%; max-height: 100%; height: 100%; border-radius: 0 }
+    .toasts { left: 12px; right: 12px; bottom: 12px }
+    .fab { width: 32px; height: 32px; bottom: 12px; left: 12px }
+  }
+
   /* ============ PRINT ============ */
   @page { size: A4; margin: 12mm 14mm }
   @media print {

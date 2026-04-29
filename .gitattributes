@@ -1,0 +1,32 @@
+# Normalize line endings — LF in repo, native checkout
+* text=auto eol=lf
+
+# Force LF for shell, Python, YAML, Markdown
+*.sh    text eol=lf
+*.py    text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.md    text eol=lf
+*.j2    text eol=lf
+*.toml  text eol=lf
+*.json  text eol=lf
+
+# Force CRLF for Windows-only files (none currently)
+# *.bat   text eol=crlf
+
+# Treat as binary (no diff, no merge)
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.svg   binary
+*.xlsx  binary
+*.xls   binary
+*.docx  binary
+*.pdf   binary
+*.zip   binary
+
+# Linguist overrides for repo language stats
+docs/**             linguist-documentation
+examples/**         linguist-documentation

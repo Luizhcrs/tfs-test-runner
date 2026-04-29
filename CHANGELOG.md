@@ -5,6 +5,16 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.1.3] — 2026-04-29
+
+### Fixed
+- **README image links broken on PyPI**. Both README.md and
+  README.pt-BR.md used relative paths (`docs/images/*.png`) that
+  resolve correctly on GitHub but fail on PyPI's project page where
+  only the rendered Markdown lives. Switched all image references to
+  absolute URLs against `raw.githubusercontent.com/.../main/docs/images/`
+  so PyPI renders the screenshots.
+
 ## [2.1.2] — 2026-04-29
 
 ### Fixed

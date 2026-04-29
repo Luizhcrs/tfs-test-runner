@@ -12,11 +12,11 @@
 
 | Tema escuro (default) | Tema claro |
 |---|---|
-| ![Hero dark](docs/images/02-hero-progress.png) | ![Tema claro](docs/images/08-light-theme.png) |
+| ![Hero dark](https://raw.githubusercontent.com/Luizhcrs/tfs-test-runner/main/docs/images/02-hero-progress.png) | ![Tema claro](https://raw.githubusercontent.com/Luizhcrs/tfs-test-runner/main/docs/images/08-light-theme.png) |
 
 | Painel de configurações (tema + PDF) | Caso detalhado com evidências |
 |---|---|
-| ![Configurações](docs/images/09-settings-panel.png) | ![Caso](docs/images/04-case-detail.png) |
+| ![Configurações](https://raw.githubusercontent.com/Luizhcrs/tfs-test-runner/main/docs/images/09-settings-panel.png) | ![Caso](https://raw.githubusercontent.com/Luizhcrs/tfs-test-runner/main/docs/images/04-case-detail.png) |
 
 <details>
 <summary><b>Mais screenshots</b> — filtro com falha, PDF, PDF com status, plano cheio, mobile, vazio</summary>
@@ -25,15 +25,15 @@
 
 | Filtro "Com falha" | PDF de evidências (default) |
 |---|---|
-| ![Filtro](docs/images/05-filter-failures.png) | ![PDF](docs/images/06-pdf-evidence.png) |
+| ![Filtro](https://raw.githubusercontent.com/Luizhcrs/tfs-test-runner/main/docs/images/05-filter-failures.png) | ![PDF](https://raw.githubusercontent.com/Luizhcrs/tfs-test-runner/main/docs/images/06-pdf-evidence.png) |
 
 | PDF com selos de status (toggle LIGADO) | Mobile / viewport estreito |
 |---|---|
-| ![PDF status](docs/images/06b-pdf-evidence-status.png) | ![Mobile](docs/images/07-narrow-view.png) |
+| ![PDF status](https://raw.githubusercontent.com/Luizhcrs/tfs-test-runner/main/docs/images/06b-pdf-evidence-status.png) | ![Mobile](https://raw.githubusercontent.com/Luizhcrs/tfs-test-runner/main/docs/images/07-narrow-view.png) |
 
 | Estado vazio | Plano completo (screenshot longa) |
 |---|---|
-| ![Vazio](docs/images/01-empty-overview.png) | [03-full-plan.png](docs/images/03-full-plan.png) |
+| ![Vazio](https://raw.githubusercontent.com/Luizhcrs/tfs-test-runner/main/docs/images/01-empty-overview.png) | [03-full-plan.png](https://raw.githubusercontent.com/Luizhcrs/tfs-test-runner/main/docs/images/03-full-plan.png) |
 
 </details>
 

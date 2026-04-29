@@ -5,6 +5,57 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.0.0] — 2026-04-29
+
+### Breaking
+- **CLI restructured into a Click multi-command group.** The previous
+  single-command form (`tfs-test-runner cases.xlsx -o plan.html`) is no
+  longer valid — use `tfs-test-runner plan cases.xlsx -o plan.html`.
+  All existing flags are preserved on the `plan` subcommand.
+
+### Added
+- **`tfs-test-runner` is now a multi-command CLI** with subcommands:
+  - `plan` — generate the HTML kit (formerly the default behavior).
+  - `validate` — parse xlsx, print summary report (case/step counts,
+    breakdown by area/state), flag missing IDs/titles/duplicates.
+    `--strict` exits non-zero on warnings.
+  - `init [PATH]` — scaffold a new test plan directory with
+    `cases.xlsx` (blank template), `phases.yaml`, `glossary.yaml`,
+    and a starter `README.md`. `--with-sample` also copies the
+    filled sample.xlsx for reference.
+  - `screenshots` — regenerate `docs/images/*.png` via Playwright
+    (maintainer-only; only available in source checkouts).
+- **Argos-translate backend** for offline, free translation
+  (`tfs-test-runner plan cases.xlsx --argos --lang pt-BR`). Auto-installs
+  the requested language pair on first use (~150 MB). Listed as optional
+  extra: `pip install 'tfs-test-runner[argos]'`.
+- **`-h` short option** for `--help` everywhere.
+- **GitHub Actions release workflow** (`.github/workflows/release.yml`)
+  builds sdist + wheel on `v*` tag push and publishes to PyPI via
+  Trusted Publishing (OIDC, no API token in repo).
+- 10 new CLI tests (Click `CliRunner`-based) covering top-level help,
+  `plan`/`validate`/`init` subcommand help, version, validate happy path,
+  plan happy path, force guard, mutually-exclusive `--llm`/`--argos`,
+  init-creates-files. Total tests: 34 → 44 passing.
+
+### Changed
+- `validate` and `init` commands replace the implicit "did the CLI
+  succeed" diagnostic. Recommended workflow:
+  `validate` first, then `plan`.
+- README and docs site updated for the new subcommand structure.
+
+### Migration from 1.x
+Any script using the old form needs the `plan` subcommand:
+
+```diff
+- tfs-test-runner cases.xlsx -o plan.html --llm --lang pt-BR
++ tfs-test-runner plan cases.xlsx -o plan.html --llm --lang pt-BR
+```
+
+All flags (`-o`, `-f`, `--llm`, `--lang`, `--model`, `--glossary`,
+`--logo`, `--phases`, `--title`, `--dump-json`) keep their previous
+names and semantics.
+
 ## [1.3.0] — 2026-04-28
 
 ### Added

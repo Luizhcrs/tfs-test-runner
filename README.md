@@ -40,36 +40,55 @@
 ## Quick start
 
 ```bash
-git clone https://github.com/luizhcrs/tfs-test-runner.git
-cd tfs-test-runner
-pip install -e .
+pip install tfs-test-runner
 
-python examples/generate_sample.py
-tfs-test-runner examples/sample.xlsx -o sample-out.html
-# open sample-out.html in your browser
+# Scaffold a fresh QA plan directory with templates
+tfs-test-runner init my-qa-plan
+cd my-qa-plan
+# … fill in cases.xlsx …
+
+# Validate the schema
+tfs-test-runner validate cases.xlsx
+
+# Generate the HTML execution kit
+tfs-test-runner plan cases.xlsx -o plan.html
 ```
 
-No API key required. The tester pastes screenshots (Ctrl+V) at each step, marks PASS/FAIL/N/A, writes notes, then clicks **PDF** for an evidence deliverable.
+Open `plan.html` in any browser. The tester pastes screenshots (Ctrl+V) at each step, marks PASS/FAIL/N/A, writes notes, then clicks **PDF** for an evidence deliverable.
 
-### No Azure DevOps? Use the blank template
+### No Azure DevOps? Use `init`
 
-Don't have an export? Download a [blank xlsx template](examples/blank-template.xlsx) (`python examples/generate_blank_template.py` regenerates it) and fill it manually — same schema as Azure DevOps' built-in **Test Plans → Export to Excel**.
+`tfs-test-runner init` scaffolds a directory with a blank xlsx template (cell comments documenting each column) plus example `phases.yaml` and `glossary.yaml`. Fill the xlsx manually — same schema as **Azure DevOps Test Plans → Export to Excel**.
+
+### Subcommands
+
+```bash
+tfs-test-runner --help                    # full command list
+tfs-test-runner plan cases.xlsx           # generate HTML kit
+tfs-test-runner validate cases.xlsx       # check schema, print stats
+tfs-test-runner init my-plan              # scaffold new plan
+tfs-test-runner screenshots               # regen docs prints (maintainers)
+```
 
 ## Common flags
 
 ```bash
-# GPT translation (any language)
+# GPT translation (paid, best quality)
 export OPENAI_API_KEY=sk-...
-tfs-test-runner cases.xlsx --llm --lang pt-BR -o plan.html
+tfs-test-runner plan cases.xlsx --llm --lang pt-BR -o plan.html
+
+# Argos translation (free, offline; auto-installs language pair)
+pip install 'tfs-test-runner[argos]'
+tfs-test-runner plan cases.xlsx --argos --lang pt-BR -o plan.html
 
 # Phase grouping + custom title + logo
-tfs-test-runner cases.xlsx \
-    --phases examples/sample-phases.yaml \
+tfs-test-runner plan cases.xlsx \
+    --phases phases.yaml \
     --title "Sprint 42 — Acceptance" \
     --logo company.png -o plan.html
 
-# Show full CLI
-tfs-test-runner --help
+# Validate before generating
+tfs-test-runner validate cases.xlsx --strict
 ```
 
 ## Features

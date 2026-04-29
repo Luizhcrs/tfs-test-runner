@@ -40,36 +40,55 @@
 ## Início rápido
 
 ```bash
-git clone https://github.com/luizhcrs/tfs-test-runner.git
-cd tfs-test-runner
-pip install -e .
+pip install tfs-test-runner
 
-python examples/generate_sample.py
-tfs-test-runner examples/sample.xlsx -o sample-out.html
-# abrir sample-out.html no navegador
+# Scaffold pasta com templates
+tfs-test-runner init meu-plano-qa
+cd meu-plano-qa
+# … preenche cases.xlsx …
+
+# Valida schema
+tfs-test-runner validate cases.xlsx
+
+# Gera kit HTML
+tfs-test-runner plan cases.xlsx -o plano.html
 ```
 
-Sem API key. O tester cola screenshots (Ctrl+V) a cada step, marca PASS/FAIL/N/A, escreve observações, clica **PDF** pra entregável.
+Abre `plano.html` no navegador. O tester cola screenshots (Ctrl+V) a cada step, marca PASS/FAIL/N/A, escreve observações, clica **PDF** pra entregável.
 
-### Sem Azure DevOps? Use o template em branco
+### Sem Azure DevOps? Use `init`
 
-Sem export? Baixa o [template xlsx em branco](examples/blank-template.xlsx) (`python examples/generate_blank_template.py` regenera) e preenche manualmente — mesmo schema do **Test Plans → Export to Excel** do Azure DevOps.
+`tfs-test-runner init` cria pasta com xlsx em branco (com comentários nas colunas) + `phases.yaml` + `glossary.yaml` exemplo. Preenche manualmente — mesmo schema do **Azure DevOps Test Plans → Export to Excel**.
+
+### Subcommands
+
+```bash
+tfs-test-runner --help                    # lista de comandos
+tfs-test-runner plan cases.xlsx           # gera HTML
+tfs-test-runner validate cases.xlsx       # checa schema + stats
+tfs-test-runner init meu-plano            # scaffold novo plano
+tfs-test-runner screenshots               # regenera prints (maintainers)
+```
 
 ## Flags comuns
 
 ```bash
-# Tradução GPT (qualquer idioma)
+# Tradução GPT (paga, melhor qualidade)
 export OPENAI_API_KEY=sk-...
-tfs-test-runner cases.xlsx --llm --lang pt-BR -o plano.html
+tfs-test-runner plan cases.xlsx --llm --lang pt-BR -o plano.html
 
-# Agrupamento em fases + título + logo
-tfs-test-runner cases.xlsx \
-    --phases examples/sample-phases.yaml \
+# Tradução argos (offline, grátis; auto-instala par de idiomas)
+pip install 'tfs-test-runner[argos]'
+tfs-test-runner plan cases.xlsx --argos --lang pt-BR -o plano.html
+
+# Fases + título + logo
+tfs-test-runner plan cases.xlsx \
+    --phases phases.yaml \
     --title "Sprint 42 — Aceite" \
     --logo empresa.png -o plano.html
 
-# CLI completo
-tfs-test-runner --help
+# Valida antes de gerar
+tfs-test-runner validate cases.xlsx --strict
 ```
 
 ## Funcionalidades

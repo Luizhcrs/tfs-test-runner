@@ -114,11 +114,13 @@ def test_v11_status_in_pdf_markup_present(tmp_path: Path):
 
 # ---------- v1.2: blank xlsx template ----------
 
-def test_v12_blank_template_exists_and_parses():
-    from pathlib import Path as _P
+def test_v12_blank_template_writes_and_parses(tmp_path: Path):
+    from tfs_test_runner.templates import write_blank_xlsx
     from tfs_test_runner.parse import parse_xlsx
-    blank = _P(__file__).parent.parent / "examples" / "blank-template.xlsx"
-    assert blank.exists(), "examples/blank-template.xlsx is missing"
+
+    blank = tmp_path / "blank.xlsx"
+    write_blank_xlsx(blank)
+    assert blank.exists()
     cases = parse_xlsx(blank)
     assert len(cases) >= 1
     for c in cases:

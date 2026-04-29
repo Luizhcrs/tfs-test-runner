@@ -1,5 +1,5 @@
 """tfs-test-runner — Azure DevOps / TFS xlsx → HTML test plan generator."""
-__version__ = "2.1.1"
+__version__ = "2.1.2"
 
 from .parse import parse_xlsx
 from .translate import translate_cases, load_glossary_yaml, DEFAULT_MODEL

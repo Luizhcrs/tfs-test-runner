@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tfs-test-runner"
-version = "2.1.1"
+version = "2.1.2"
 description = "Convert Azure DevOps / TFS xlsx test case exports into a self-contained HTML execution kit with evidence capture and PDF export."
 readme = "README.md"
 requires-python = ">=3.10"

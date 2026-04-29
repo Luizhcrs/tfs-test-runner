@@ -5,6 +5,26 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.1.2] — 2026-04-29
+
+### Fixed
+- **`init` command broke in CI / pip-installed environments** because it
+  copied `examples/blank-template.xlsx`, which is gitignored (the
+  `.gitignore` rule `*.xlsx` plus `!examples/sample.xlsx` exception
+  excluded blank-template). All 9 CI matrix cells failed the
+  `test_cli_init_creates_files` and `test_v12_blank_template_*` tests.
+- New `tfs_test_runner.templates` module bundles blank xlsx generation
+  (via openpyxl) plus `phases.yaml`, `glossary.yaml`, and `README.md`
+  starter content as Python strings. `init` now generates the blank
+  xlsx at runtime instead of copying a packaged file.
+- Test `test_v12_blank_template_*` rewritten to call `write_blank_xlsx`
+  in a tmp_path fixture, no longer depending on an in-tree artifact.
+
+### Removed
+- `examples/generate_blank_template.py` is now a thin wrapper around the
+  package's `tfs_test_runner.templates.write_blank_xlsx` (kept for
+  backwards-compatible scripted regeneration).
+
 ## [2.1.1] — 2026-04-29
 
 ### Fixed

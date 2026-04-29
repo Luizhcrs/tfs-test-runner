@@ -184,10 +184,19 @@ async def capture_all():
         await page.evaluate("document.documentElement.dataset.theme = 'dark'")
         await page.wait_for_timeout(200)
 
-        # 10) Mobile-ish narrow view (dark)
+        # 10) Tablet / narrow laptop (~960px) — verifies mid-range breakpoint
+        await page.set_viewport_size({"width": 960, "height": 700})
+        await page.reload()
+        await page.wait_for_selector(".case.open")
+        await page.evaluate("document.documentElement.dataset.theme = 'dark'")
+        await page.wait_for_timeout(400)
+        await page.screenshot(path=str(OUT_DIR / "07b-tablet-view.png"), full_page=False)
+
+        # 11) Mobile narrow view (dark)
         await page.set_viewport_size({"width": 480, "height": 900})
         await page.reload()
         await page.wait_for_selector(".case.open")
+        await page.evaluate("document.documentElement.dataset.theme = 'dark'")
         await page.wait_for_timeout(400)
         await page.screenshot(path=str(OUT_DIR / "07-narrow-view.png"), full_page=False)
 

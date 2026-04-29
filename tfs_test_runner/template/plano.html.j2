@@ -382,7 +382,23 @@
   footer{padding:18px;color:var(--muted);font-size:11px;text-align:center}
   footer kbd{background:var(--panel2);border:1px solid var(--border);padding:1px 5px;border-radius:3px;font-size:10px}
 
-  /* ============ MOBILE ============ */
+  /* ============ TABLET / NARROW LAPTOP (641-1024px) ============ */
+  @media (max-width: 1024px) {
+    .header-row { gap: 8px }
+    .actions { margin-left: 0; flex: 1 1 100%; justify-content: flex-start; gap: 4px }
+    .actions button { flex: 1 1 auto; min-width: 90px; padding: 6px 8px; font-size: 11px }
+    .search { flex: 1 1 100%; max-width: none }
+    .progress { display: none }
+    .stats { flex-wrap: wrap; gap: 6px; font-size: 11px }
+    .filter-chips { flex: 1 1 100%; gap: 4px }
+    .chip { padding: 3px 8px; font-size: 11px }
+    .case-head { flex-wrap: wrap }
+    .case-head .status-bar { order: 99; width: 100%; flex-wrap: wrap; padding-top: 4px }
+    .step-row { grid-template-columns: 1fr }
+    .thumb { width: calc(33% - 6px) }
+  }
+
+  /* ============ MOBILE (<=640px) ============ */
   @media (max-width: 640px) {
     main { padding: 12px }
     header { padding: 8px 12px }

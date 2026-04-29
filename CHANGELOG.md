@@ -5,6 +5,21 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.1.1] — 2026-04-29
+
+### Fixed
+- **Tablet / narrow-laptop viewport (641-1024px)** had a layout bug where
+  the second header row (stats + progress + filter chips) overlapped the
+  action buttons because v2.1.0 only added a `<=640px` mobile breakpoint
+  and left the 641-1024px range using desktop rules that overflowed.
+- New `@media (max-width: 1024px)` breakpoint reflows the header at
+  tablet width: actions wrap to a full-width row, search stretches
+  full-width, progress bar hides, filter chips wrap.
+
+### Added
+- New screenshot `07b-tablet-view.png` capturing the tablet breakpoint
+  for visual regression tracking.
+
 ## [2.1.0] — 2026-04-29
 
 ### Added

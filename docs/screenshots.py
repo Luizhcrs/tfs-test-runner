@@ -44,7 +44,7 @@ async () => {
     // Open IndexedDB and put demo images
     const imgs = window.__demoImages;
     const db = await new Promise((res, rej) => {
-        const req = indexedDB.open('e350-imgs', 1);
+        const req = indexedDB.open('tfs-imgs', 1);
         req.onupgradeneeded = (e) => e.target.result.createObjectStore('imgs', {keyPath: 'id'});
         req.onsuccess = (e) => res(e.target.result);
         req.onerror = (e) => rej(e);
@@ -76,13 +76,13 @@ async () => {
         'step:102:2:demo3': 'Error toast (note: wrong locale)',
         'case:101:demo0':   'Browser/network tab snapshot',
     };
-    localStorage.setItem('e350-tests-v3', JSON.stringify(state));
-    localStorage.setItem('e350-tests-v3-cap', JSON.stringify(captions));
+    localStorage.setItem('tfs-tests-v1', JSON.stringify(state));
+    localStorage.setItem('tfs-tests-v1-cap', JSON.stringify(captions));
     // open all phases & cases by default
     const open = {};
     document.querySelectorAll('.phase').forEach(p => open['p_' + p.dataset.pid] = true);
     document.querySelectorAll('.case').forEach(c => open['c_' + c.dataset.cid] = true);
-    localStorage.setItem('e350-tests-v3-open', JSON.stringify(open));
+    localStorage.setItem('tfs-tests-v1-open', JSON.stringify(open));
 }
 """
 
@@ -104,13 +104,17 @@ async def capture_all():
     from playwright.async_api import async_playwright
     async with async_playwright() as p:
         browser = await p.chromium.launch()
+        # Force dark color scheme so theme="auto" renders dark by default
         ctx = await browser.new_context(viewport={"width": 1400, "height": 900},
-                                         device_scale_factor=2)
+                                         device_scale_factor=2,
+                                         color_scheme="dark")
         page = await ctx.new_page()
 
-        # 1) Empty state hero
+        # 1) Empty state hero (force dark explicit so screenshot is consistent)
         await page.goto(html_path.as_uri())
         await page.wait_for_selector(".phase")
+        await page.evaluate("document.documentElement.dataset.theme = 'dark'")
+        await page.wait_for_timeout(150)
         await page.screenshot(path=str(OUT_DIR / "01-empty-overview.png"), full_page=False)
 
         # 2) Pre-populate state and reload
@@ -124,6 +128,7 @@ async def capture_all():
         await page.evaluate(DEMO_STATE_SCRIPT)
         await page.reload()
         await page.wait_for_selector(".case.open")
+        await page.evaluate("document.documentElement.dataset.theme = 'dark'")
         await page.wait_for_timeout(500)
 
         # 3) Hero with progress

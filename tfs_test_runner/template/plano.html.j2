@@ -677,7 +677,19 @@
 
 <script>
 const PHASES = {{ data_json | safe }};
-const KEY = "e350-tests-v3";
+const KEY = "tfs-tests-v1";
+// Migration: copy over any legacy state from prior project name (one-shot).
+(function migrate(){
+  const oldKeys = ["e350-tests-v3","e350-tests-v3-cap","e350-tests-v3-open","e350-tests-v3-status-pdf","e350-tests-v3-theme"];
+  const newKeys = ["tfs-tests-v1","tfs-tests-v1-cap","tfs-tests-v1-open","tfs-tests-v1-status-pdf","tfs-tests-v1-theme"];
+  for(let i=0;i<oldKeys.length;i++){
+    const v = localStorage.getItem(oldKeys[i]);
+    if(v !== null && localStorage.getItem(newKeys[i]) === null){
+      localStorage.setItem(newKeys[i], v);
+      localStorage.removeItem(oldKeys[i]);
+    }
+  }
+})();
 const state = JSON.parse(localStorage.getItem(KEY) || "{}");
 const openState = JSON.parse(localStorage.getItem(KEY+"-open") || "{}");
 const captions = JSON.parse(localStorage.getItem(KEY+"-cap") || "{}");
@@ -703,11 +715,46 @@ function toast(msg, type="ok", ms=2200){
 
 /* ============ IndexedDB ============ */
 let db;
-const dbReq = indexedDB.open("e350-imgs", 1);
+const dbReq = indexedDB.open("tfs-imgs", 1);
 dbReq.onupgradeneeded = e => {
   e.target.result.createObjectStore("imgs", {keyPath:"id"});
 };
-dbReq.onsuccess = e => { db = e.target.result; loadAllImages(); };
+dbReq.onsuccess = e => {
+  db = e.target.result;
+  migrateLegacyImagesIfAny().finally(loadAllImages);
+};
+
+/* One-shot migration of images stored under legacy DB name. */
+function migrateLegacyImagesIfAny(){
+  return new Promise(resolve => {
+    const oldReq = indexedDB.open("e350-imgs", 1);
+    oldReq.onerror = () => resolve();
+    oldReq.onupgradeneeded = () => {/* no legacy DB exists */};
+    oldReq.onsuccess = e => {
+      const oldDb = e.target.result;
+      if(!oldDb.objectStoreNames.contains("imgs")){ oldDb.close(); resolve(); return; }
+      const oldTx = oldDb.transaction("imgs","readonly");
+      const items = [];
+      oldTx.objectStore("imgs").openCursor().onsuccess = ev => {
+        const c = ev.target.result;
+        if(!c){
+          if(!items.length){ oldDb.close(); resolve(); return; }
+          const newTx = db.transaction("imgs","readwrite");
+          const store = newTx.objectStore("imgs");
+          for(const it of items) store.put(it);
+          newTx.oncomplete = () => {
+            oldDb.close();
+            indexedDB.deleteDatabase("e350-imgs");
+            resolve();
+          };
+          return;
+        }
+        items.push(c.value);
+        c.continue();
+      };
+    };
+  });
+}
 
 function imgPut(id, dataUrl){
   return new Promise(res=>{
@@ -1414,7 +1461,7 @@ document.getElementById("export-data").onclick = async ()=>{
   const blob = new Blob([JSON.stringify({state, captions, imgs}, null, 2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = `e350-tests-${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `tfs-tests-${new Date().toISOString().slice(0,10)}.json`;
   a.click();
   toast("Backup salvo","ok");
 };

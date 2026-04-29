@@ -65,7 +65,7 @@ def translate_cases(
                 s.setdefault("expected", s["expected_en"])
         return cases
 
-    if backend == "llm":
+    if backend in ("llm", "argos"):
         unique: dict[str, None] = {}
         for c in cases:
             unique.setdefault(c["title_en"], None)
@@ -75,11 +75,15 @@ def translate_cases(
         unique.pop("", None)
         items = list(unique.keys())
         if progress is not None:
-            progress(f"LLM: {len(items)} unique strings to translate")
+            progress(f"{backend}: {len(items)} unique strings to translate")
 
-        translations = _gpt_batch(items, model=model, api_key=api_key,
-                                  target_lang=target_lang, glossary=glossary,
-                                  progress=progress)
+        if backend == "llm":
+            translations = _gpt_batch(items, model=model, api_key=api_key,
+                                      target_lang=target_lang, glossary=glossary,
+                                      progress=progress)
+        else:  # argos
+            translations = _argos_batch(items, target_lang=target_lang, progress=progress)
+
         tmap = dict(zip(items, translations))
         tmap[""] = ""
 
@@ -90,7 +94,7 @@ def translate_cases(
                 s["expected"] = tmap.get(s["expected_en"], s["expected_en"])
         return cases
 
-    raise ValueError(f"unknown backend: {backend!r} (use 'none' or 'llm')")
+    raise ValueError(f"unknown backend: {backend!r} (use 'none', 'llm', or 'argos')")
 
 
 # ---------- LLM machinery ----------
@@ -137,6 +141,68 @@ def _gpt_call_with_retry(client, model: str, system: str, user: str,
                 time.sleep(delay)
                 delay *= 2
     raise RuntimeError(f"OpenAI call failed after {max_retries} attempts: {last_err}")
+
+
+_ARGOS_LANG_MAP = {
+    "pt-BR": "pt", "pt-br": "pt", "pt": "pt",
+    "en-US": "en", "en-us": "en", "en": "en",
+    "es-ES": "es", "es-es": "es", "es": "es",
+    "fr-FR": "fr", "fr-fr": "fr", "fr": "fr",
+    "de-DE": "de", "de-de": "de", "de": "de",
+    "it-IT": "it", "it": "it", "ja-JP": "ja", "ja": "ja",
+    "zh-CN": "zh", "zh": "zh", "ru-RU": "ru", "ru": "ru",
+}
+
+
+def _argos_batch(strings: list[str], target_lang: str, progress=None) -> list[str]:
+    """Translate via argos-translate (offline, free). Auto-installs language pair on first use."""
+    try:
+        import argostranslate.package as ap
+        import argostranslate.translate as at
+    except ImportError as e:
+        raise RuntimeError(
+            "Install argos-translate: pip install 'tfs-test-runner[argos]' or pip install argostranslate"
+        ) from e
+
+    src = "en"
+    tgt = _ARGOS_LANG_MAP.get(target_lang, target_lang.split("-")[0].lower())
+    if tgt == src:
+        return list(strings)
+
+    installed = {(l.from_code, l.to_code) for l in at.get_installed_languages()
+                 for tr in l.translations_from for _ in [tr]}
+    pair_installed = any(t.from_code == src and t.to_code == tgt
+                         for lang in at.get_installed_languages()
+                         for t in lang.translations_from)
+    if not pair_installed:
+        if progress is not None:
+            progress(f"argos: downloading language pair {src} -> {tgt} (one-time, ~150MB)")
+        ap.update_package_index()
+        avail = ap.get_available_packages()
+        candidates = [p for p in avail if p.from_code == src and p.to_code == tgt]
+        if not candidates:
+            raise RuntimeError(f"argos has no {src} -> {tgt} package available")
+        path = candidates[0].download()
+        ap.install_from_path(path)
+
+    langs = at.get_installed_languages()
+    src_lang = next((l for l in langs if l.code == src), None)
+    tgt_lang = next((l for l in langs if l.code == tgt), None)
+    if not src_lang or not tgt_lang:
+        raise RuntimeError(f"argos pair {src} -> {tgt} install verification failed")
+    translator = src_lang.get_translation(tgt_lang)
+
+    out: list[str] = []
+    for i, s in enumerate(strings):
+        if progress is not None and i % 50 == 0 and i:
+            progress(f"argos {i}/{len(strings)}")
+        try:
+            out.append(translator.translate(s) if s else s)
+        except Exception as e:
+            if progress is not None:
+                progress(f"WARN: argos failed on item {i}, keeping original: {e}")
+            out.append(s)
+    return out
 
 
 def _gpt_batch(strings: list[str], model: str, api_key: str | None,

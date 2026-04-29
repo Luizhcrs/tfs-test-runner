@@ -21,7 +21,6 @@ Cases not matched by any phase fall into an "Others" phase appended at the end.
 Levels: 'easy' / 'med' / 'hard' (purely informational, drives badge color).
 """
 from __future__ import annotations
-from typing import Any
 
 
 def _case_matches(case: dict, criteria: dict) -> bool:

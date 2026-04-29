@@ -33,5 +33,14 @@ jobs:
       - name: Smoke test CLI
         run: |
           python examples/generate_sample.py
-          python build.py examples/sample.xlsx -o sample-out.html -f
+          tfs-test-runner --version
+          tfs-test-runner validate examples/sample.xlsx
+          tfs-test-runner plan examples/sample.xlsx -o sample-out.html -f
           python -c "from pathlib import Path; assert Path('sample-out.html').stat().st_size > 5000"
+
+      - name: Smoke test init
+        run: |
+          tfs-test-runner init qa-smoke-test
+          python -c "from pathlib import Path; assert (Path('qa-smoke-test')/'cases.xlsx').exists()"
+          tfs-test-runner plan qa-smoke-test/cases.xlsx -o init-out.html -f
+          python -c "from pathlib import Path; assert Path('init-out.html').stat().st_size > 5000"
